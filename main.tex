@@ -1,0 +1,3277 @@
+% compile with pdflatex
+
+\documentclass[12pt, a4paper, twocolumn]{article}
+
+% more control over abstrac environment in two-column paper
+% allows e.g. use \saythanks
+\usepackage{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Package to change margin size
+\usepackage{anysize}
+\marginsize{2cm}{2cm}{1cm}{2cm}
+
+% Package to make headers
+\usepackage{fancyhdr}
+
+\usepackage[dvipsnames]{xcolor}
+%\renewcommand{\headrulewidth}{0pt}
+
+% Package for multicolumn
+\usepackage{multicol}
+\setlength\columnsep{18pt}
+
+% redefine astract
+\renewenvironment{abstract}
+ {\par\noindent\textbf{\abstractname}\ \ignorespaces \\}
+ {\par\noindent\medskip}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% might also work for page margins
+%\usepackage[left=4cm,right=4cm,top=4cm,bottom=4cm]{geometry}
+
+% for including graphics
+%\usepackage[draft]{graphicx}
+\usepackage{graphicx}
+
+% for chess boards, where the xskak package loads both 'skak' and 'chessboard'
+% package and is thus more powerfull than just the skak package
+\usepackage{xskak}
+
+% packages for TODO comment %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[T1]{fontenc}		% T1 font encoding: 8-bit-encoding using fonts with 256 glyphs (default OT1, 7-bit, 128 glyphs)
+\usepackage{xcolor}				% provides easy access to a range of colors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% provides easy and useful citations, cite with \cref{bla} and \Cref{}
+% must be LAST package loaded
+% NOTE: in revtex-4.2, hyperref must explicetly be loaded
+%       see https://tex.stackexchange.com/a/532130/120427
+%\usepackage[dvipdfm]{hyperref}
+%\usepackage[dvips]{hyperref}
+\usepackage{hyperref}
+\usepackage[capitalise]{cleveref}
+
+%abbreviations used in bibliography
+%\newcommand{\PoP}[0]{Phys. Plasmas}
+%\newcommand{\NF}[0]{Nucl. Fusion}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% source: https://www.cesarsotovalero.net/blog/use-custom-latex-macros-to-boost-your-writing-productivity.html
+% Create custom user defined command for `TODO` notes
+\newcommand*\badge[1]{
+  \colorbox{red}{\color{white}#1}
+}
+\newcommand{\todo}[1]{
+  \noindent\textbf{\badge{TODO}} {\color{red}#1}
+  \GenericWarning{}{LaTeX Warning: TODO: #1}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\makeatletter
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+                       {-18\p@ \@plus -4\p@ \@minus -4\p@}%
+                       {4\p@ \@plus 2\p@ \@minus 2\p@}%
+%                       {\normalfont\normalsize\itshape%\bfseries\boldmath
+                       {\normalfont\normalsize\bfseries\boldmath
+                        \rightskip=\z@ \@plus 8em\pretolerance=10000 }}
+%\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+%                       {-12\p@ \@plus -4\p@ \@minus -4\p@}%
+%                       {2\p@ \@plus 1\p@ \@minus 1\p@}%
+%                       {\normalfont\normalsize\itshape
+%                        \rightskip=\z@ \@plus 8em\pretolerance=10000 }}
+\makeatother
+
+%\renewcommand{\showboard}{\begin{center}\showboard\end{center}}
+%\newcommand{\showcenterboard}[0]{\begin{center}\showboard\end{center}}
+\newcommand{\showcenterboard}[0]{{\centering\showboard\par}}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\title{\textbf{Chess: Some Notes}}
+\author{Alf K\"{o}hn-Seemann\footnote{\href{mailto:alf.koehn@posteo.net}{alf.koehn@posteo.net}}}
+\newcommand{\abstractText}{\noindent%
+This is not a chess book. This is a collection of chess notes I took on the path of trying to understand what is going on on the chessboard and to become better in chess. They originate from different sources, including YouTube-videos, chess magazines, chess books, and more. Where available, a link to the references is given. Let me know if you have any comments or found any blunders.%
+%\footnote{\href{mailto:alf.koehn@posteo.net}{alf.koehn@posteo.net}}.%
+}
+%%%%%%%%%%%%%%%%%%%%%
+
+
+%style for bibliography
+\bibliographystyle{unsrt.bst}
+
+\begin{document}
+
+% Makes header
+\pagestyle{fancy}
+\thispagestyle{empty}
+\fancyhead[R]{\textit{Chess: Some Notes}}
+\fancyhead[L]{}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Abstract %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% starting twocolumn environment, and defining a header text in the optional
+% argument of \twocolumn, where the header text is written at top of the page
+% in one column with the width of the whole page
+% see https://tex.stackexchange.com/posts/57586/revisions
+\twocolumn[
+    \begin{@twocolumnfalse}
+    \maketitle
+    %\smallskip	%\bigskip \medskip \smallskip
+    {\color{gray}\hrule}
+    \bigskip
+    \begin{abstract}
+      \abstractText
+    \bigskip
+    {\color{gray}\hrule}
+    \bigskip
+    \end{abstract}
+    \end{@twocolumnfalse}
+]
+\saythanks
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Introduction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\textit{Think before you move}. A simple, yet powerful truth about chess. Just following that rule would have saved me from a lot of blunders I have made in the past. As we all know, however, playing according to that rule is not so simple as accepting it. To make my chess life a bit easier, I have therefore compiled a list of chess notes I considered useful both for my past and future self. 
+
+\textit{If you find a good move, find a better move.}\footnote{Emanuel Lasker} Another important lesson in chess: finding a move that seems sufficient or maybe even good does not mean we should directly play it. Thanks to its complexity, there are often other good moves in chess. The idea of this quote is that we should spend a reasonable amount of time looking for those good moves, finding thereby maybe a much better move or choose from a set of equally good moves which the best one is.
+
+Some general tips in chess are: \textit{Ensure that all your pieces are doing something}, meaning before moving a piece a second time in the opening, try to move every piece once. \textit{Take your time.} Try to think of all possible responses on your next move, especially the threats, can you meet all of them? If not, find another move. \textit{Tactics, tactics, tactics} (protecting your pieces and winning opponent's pieces). \textit{Make use of your king in the endgame.} In the endgame, \textit{rooks belong behind passed pawns}. Don't forget to \textit{push your passed pawns}.
+
+\section{Openings for the beginner}\label{s:opening}
+General opening rules are:
+\begin{enumerate}
+	\item Control the center
+	\item Develop (all of) your pieces
+	\item React to threats
+	\item Castle
+	\item Move a rook to a central file
+\end{enumerate}
+%
+%xxxVariantenDurchKlammernEinleiten?xxx
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% beginners' opening %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% e4 is a theory-heavy opening, as White needs to know the correct responses to Black's answer
+% King's indian is a very flexible system, not really an opening for Black which can be played against a lot of openings
+%\subsection{For the beginner}
+We will start discussing a few common and useful openings for the beginner, where only the first few moves will be shown without any in-depth discussion (those are, at least to a certain degree, available in later sections). A set of good openings for the White player will be discussed first, followed by good openings from Black's perspective, where both parts follow one of the well-made chess tutorials of Rafael Kloth~\cite{Kloth2020}. Note that the suggested moves might not the the best theoretical moves, rather the moves considered the best for a beginner as they do not require a deep theoretical understanding.
+\subsection{Playing as White}
+% v1: 2025-11-16
+% \newgame or \newchessgame to initialize a new game
+\newgame
+
+A good opening for the beginner is \mainline{1.4e}. All openings discussed in this section will start with this move. It is a very flexible opening and it follows directly one of the opening rules, \textit{control the center}: with that move we are already controlling d5, a central square and also f5 which is sometimes considered as a square of the \textit{broader center}.
+\par
+% requires compilation as latex - dvips - ps2pdf
+% better: pdflatex (then opacity works)
+% note: we might want to use \par in-front of the \chessboard command instead
+%       of having an empty line which might move the chessboard a bit too far
+%       away from the text
+%\chessboard[pgfstyle=color, opacity=0.4, color=red!50, markfields={d4,e4,d5,e5}]
+%\chessboard[pgfstyle=color, opacity=0.5, color=blue!20, markfields={d4}]
+\chessboard[ 
+	%addpgf={\tikz[overlay]
+	%	\draw[-stealth,red,line width=0.3em,solid,opacity=1]
+	%	(e4)--(d5);
+	%	},
+	pgfstyle=color, opacity=0.6, color=red!50, markfields={d4,e4,d5,e5},
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,	% 75% red, 25% white
+    color=black!50,		% 50% black, 50% white
+    opacity=1,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={e4-f5,e4-d5,f1-c4, d1-f3,d1-g4,d1-h5},
+    markmoves={e4-f5,e4-d5,f1-c4, d1-h5},
+	]
+
+Controlling the center, which is marked in light red on the chessboard just shown, is important as most of the action during the game will take place there. Furthermore, we open diagonals for bishop and queen (as indicated on the board by the arrows). Notice the filled square at the top right-hand side of the board indicating Black is next to move, an open (i.e.\ white-filled) square at the bottom right-hand side would indicate White is next to move.
+
+In this section, a few examples are given how to continue from this first move, providing the White beginner with a good set of openings. All of the examples basically follow the opening rules as presented in the beginning of Sec.~\ref{s:opening}.
+\storegame{beginner_opening_white_e4}
+
+% \xskakcomment{bla.} allows to enter comments directly into mainline
+Continuing with \mainline{1... e5 2.Nf3 Nc6 3.Bc4} is the \textit{Italian Game}, also referred to as \textit{Guicco Piano} (``Quite Game''), one of the most popular openings which is discussed in more detail in Sec.~\ref{s:opening_italian_game}. White follows the opening rule to develop the minor pieces by getting their knight and bishop into action. The general recommendation for the beginner is to do it in exactly that order as the knights have a reduced range compared to the bishops who can already control quite a number of squares from their starting position as soon as the diagonals are open. A general rule is therefore: \textit{knights before bishops!}
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f8-c5,e1-g1},
+	]
+
+Playing further \mainline{3...Bc5 4.O-O} follows the general opening rule to castle and thus protect the king. If Black would have developed their second knight instead, this allows for White to create a complicated and threatening position, (\variation{3...Nf6 4.Ng5}), where White has two attackers on the sensible f7-square. This would be the starting position of the so-called \textit{Fried Liver Attack}, discussed further in Sec.~\ref{sec:fried_liver_attack}. By playing \bmove{Bc5}, Black's queen is still looking at the g5-square, thereby preventing this threat by White.
+
+\mainline{4...Nf6 5.d3 O-O 6.Bg5 d6 7.Nc3} develops the remaining minor pieces of White and finishes the opening. White should now probably continue with bringing their rook into the game, \wmove{Re1}, to support their e-pawn.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f1-e1},
+	]
+
+\newchessgame
+The Italian Game is a good opening for the beginner and it is often recommended to play along this line if the games starts with \mainline{1.e4 e5} because it follows the general opening rules. As just discussed, the Italian Game would continue with \mainline{2.Nf3}, followed by \bmove{Nc6}. Instead, the Black beginner might play \mainline{2...f6} to defend the pawn on the e5-square. This is, however, considered a blunder and White can simply take the pawn with \mainline{3.Nxe5}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f6-e5,d1-h5},
+	]
+
+If Black now takes the knight with \mainline{3...fxe5}, White can develop their queen to \mainline{4.Qh5+}. If Black defends with \bmove{g6}, White will take the pawn \wmove{Qxe5+}, delivering another check. Moving the king does not really help either, \mainline{4...Ke7 5.Qxe5+ Kf7 6.Bc4+ d5 7.Bxd5+ Kg6}. Sacrificing the knight was worth it for White as their position is already much stronger.
+
+\chessboard
+
+\newchessgame\restoregame{beginner_opening_white_e4}
+There are several openings for Black where a pawn is advanced only one square in the first move, e.g. \mainline{1... c6} with the idea to play \bmove{d5}. This response by Black is known as the \textit{Caro-Kann Defense} and explained further in Sec.~\ref{s:opening_carokann_defence}. For the White beginner a simple answer to that is to make use of the opportunity to gain full control of the center with \mainline{2.d4}. White now has a \textit{full pawn center}, controlling the squares c5 to f5 (marked in red on the board).
+
+\chessboard[
+	pgfstyle=color, opacity=0.6, color=red!50, markfields={c5,d5,e5,f5},
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={e4-f5,e4-d5,d4-e5,d4-c5},
+	]
+
+Continuing as \mainline{2... d5 3.exd5 cxd5} trades the pawns after which we can go back to the opening rules and develop knight and bishop, then castle. \par
+%
+%\showboard
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={g1-f3,f1-b5},
+	]
+
+\newgame\restoregame{beginner_opening_white_e4}
+If Black plays \mainline{1... d6}, White can again gain full control of the center with \mainline{2.d4}. Black will now probably try to attack White's central pawns which can however easily be defended by White and leads to further development of the pieces. Exchanging pawns and queens is also an option, 
+\mainline{2...e5 3.dxe5 dxe5 4.Qxd8+ Kxd8}, where Black has the disadvantage of being no longer able to castle. Playing further along this line, we simply follow the opening rules, i.e.\ develop knight and bishop.
+%
+%\showboard
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f1-c4,g1-f3},
+	]
+
+\newgame\restoregame{beginner_opening_white_e4}
+Another answer by Black consisting of a single-pawn move is \mainline{1... e6}, starting the \textit{French Defense} discussed in more detail in Sec.~\ref{s:opening_french_defense}. The White beginner plays \mainline{2.d4}, aiming at controlling the center. After Black plays \mainline{2... d5}, attacking the pawn on e4, White can simply exchange the pawns, \mainline{3.exd5 exd5}, and, once again, follow the opening rules from here on.
+%
+%\showboard
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f1-d3,g1-f3},
+	]
+
+\newgame\restoregame{beginner_opening_white_e4}
+A popular response by Black is \mainline{1... d5}, corresponding to the \textit{Scandinavian Defense}, which is discussed in more detail in Sec.~\ref{s:opening_scandinavian}. White's central pawn is now directly attacked which cannot be ignored. The highest priority thus is to react to the threat on White's pawn, either by defending it or by accepting the exchange.
+%
+%\showboard
+\chessboard
+
+A simple answer is to accept the exchange offer, \mainline{2.exd5 Qxd5}. From this position on, White can go back to the opening rules and develop their pieces thereby attacking Black's queen, \mainline{3.Nc3}. Develop the knight with \wmove{Nf3}, push the central pawn \wmove{d4}, and develop the bishop \wmove{Bc4} are moves White should try to play next, followed by castling king-side \wmove{O-O}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d5-a5,g1-f3},
+	]
+
+\newgame\restoregame{beginner_opening_white_e4}
+A very direct reaction of Black in the beginning is \mainline{1... c5}, which is referred to as the \textit{Sicilian Defense} and discussed in detail in Sec.~\ref{s:opening_sicilian}. White cannot get the full pawn center as in the previous examples since the d4 square is controlled by Black's pawn on c5.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c5-d4,c5-b4},
+	]
+
+White can now simply continue developing its minor pieces with \mainline{2.Nf3 Nc6 3.Bb5}. The latter move is recommended (over \wmove{Bc4}) for the beginner with the aim on exchanging Black's knight against White's bishop to simplify the position somewhat. Advance the central pawn \wmove{d3}, castle \wmove{O-O}, and develop the remaining minor pieces should be White's next moves.
+
+%\chessboard[ addpgf={\tikz[overlay]\draw[red,line width=0.3em,->,solid,opacity=0.3](b5)--(c6);}]
+%\chessboard[ addpgf={\tikz[overlay]\draw[-stealth,red,line width=0.3em,solid,opacity=0.3](b5)--(c6);}]
+\chessboard[
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b5-c6},]
+
+\newgame\restoregame{beginner_opening_white_e4}
+A not so common response by Black is \mainline{1... g6}, with the idea to develop the bishop to \bmove{Bg7}. The move is referred to as \textit{fianchetto}, describing the development of a bishop to the second rank (or seventh rank when playing Black). This is the \textit{Modern Defense}, also known as the \textit{Robatsch Defense}, named after Austrian chess player Karl Robatsch. As the d4 square is not (yet) attacked by Black, White makes use of the opportunity to get the full pawn center with \mainline{2.d4} and continues to develop their minor pieces with \mainline{2... Bg7 3.Nf3 d6}, followed by developing the bishop and castling king-side \wmove{O-O}.
+\chessboard
+
+\subsection{Playing as Black}
+% v1: 2025-11-17
+\newgame
+We will now look at good responses of Black to White's most common openings. For illustration purposes, the chessboards are flipped in this section, showing Black's perspective. 
+The most common openings White plays are \wmove{e4} and \wmove{d4} to which the recommended answer for the beginner is simply \bmove{e5} and \bmove{d5}, respectively. Being popular among beginners, Black must pay attention to not fall into the trap of the \textit{Scholar's Mate} which starts with \mainline{1.e4 e5 2.Qh5}, and is discussed in more detail in \cref{sec:scholars_mate}.
+
+\chessboard[
+	inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b8-c6},
+    ]
+    
+Playing the queen that early in the game is a violation of the opening rules and a dangerous move of White who is hoping that Black falls for this trap where White is aiming on the weak f7-square while pretending to just attack the pawn on e5. Continuing with \mainline{2...Nc6 3.Bc4}, Black must pay attention as there is a mate in one with \wmove{Qxf7}. If Black just continues to develop minor pieces with e.g.\ \bmove{Nf6} or \bmove{Bc5}, the game is lost.
+
+\chessboard[
+	inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={h5-f7,g7-g6},
+    ]
+    
+Black can, however, prevent the mate with the simple move \mainline{3...g6}, attacking the queen. White might give it another try with \mainline{4.Qf3} which, again, is threatening mate in one. A proper defense by Black is \mainline{4...Nf6}. Black can now focus on the opening rules by \bmove{d6} or \bmove{Be7}, followed by king-side castling \bmove{O-O}.
+
+\newchessgame
+While Scholar's Mate might be the most commonly played chess game~\cite{CHESScom.2023}, we will rarely see it in an actual game (it is worth though of being aware of it to not fall for the trap in a blitz game). A more likely game might also start with \mainline{1.e4 e5}. White will now often attack the pawn, a threat to which Black must react: \mainline{2.Nf3 Nc6}. Usually, White and Black will continue trying to control the center and develop minor pieces \mainline{3.Bc4 Bc5 4.d3 Nf6}. This corresponds to the mainline of the Italian Game, already mentioned earlier and discussed in more detail in Sec.~\ref{s:opening_italian_game}.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f3-g5,g5-f7,c4-f7},
+    ]
+
+As indicated by the arrows on the board, Black must now pay attention as White might be aiming on the f7 square with \wmove{Ng5}. In this position, Black can simply castle king-side \bmove{O-O}. If White decides to exchange bishop and knight against rook and pawn, while mathematically equal, this is a disadvantage for White since they loose developed pieces and have a worse position after the exchange. A good continuation for White is \mainline{5.Bg5}, developing the bishop and pinning White's knight on f6. After \mainline{5... d6 6.Nc3}, Black should no longer castle as \wmove{Nd5} imposes a threat to Black's knight on f6, which might eventually lead to a broken pawn structure in-front of a castled king.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c3-d5,h7-h6},
+    ]
+
+A proper response by Black is \mainline{6... h6 7.Bh4 g5 8.Bg3}, attacking and hunting White's bishop. Black must now pay attention as \wmove{Na4} is threatening to take (or rather exchange) the bishop on c5, which Black likes to keep. With \bmove{a6} Black can create an escape square for the bishop.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c3-a4,a7-a6,c8-c6},
+    ]
+    
+Black could now continue to develop its pieces with \bmove{Be6}, getting the Queen out and castling either king- or queen-side, finishing the opening.
+
+%%% Kings Pawn Game/Leonardis Variation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newchessgame
+Any opening starting with \mainline{1.e4} is generally referred to as the \textit{King's Pawn Game}. A possible variation continues with \mainline{1...e5 2.d3}, which is known as the \textit{Leonardis Variation}, named after Italian chess player Giovanni Domenico di Leonardis from the Renaissance period.
+%\par
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b8-c6},
+	]
+	
+It is a passive opening where White blocks their light-squared bishop and thus gives Black an advantage. Black should now think of the opening rules, and start to develop minor pieces, 
+\mainline{2...Nc6 3.Nf3 Nf6 4.Be2}. 
+
+\chessboard[
+	inverse,
+	]
+
+\newchessgame \hidemoves{1.e4 e5 2.d3 Nc6 3.Nf3}
+If, alternatively, White decides to develop their f-pawn, Black should take it, fighting for center control, \variation{3.f4 exf4 4.Bxf4 d5!}.
+
+
+\newgame
+% Queens gambit %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Another mainline of White is \mainline{1.d4}, to which Black can simply respond with \mainline{1...d5}. White will often continue with \mainline{2.c4}, corresponding to the \textit{Queen's Gambit}.
+    
+\chessboard[
+	inverse,
+	]
+
+White is hoping here that Black takes the pawn \bmove{cxd5}, as this would reduce Black's central control. Note that White will very likely gets their pawn back and it is thus not a traditional \textit{gambit} where a sacrifice is included. As a Black player, we prefer to defend the pawn with \mainline{2...e6}, which is referred to as the \textit{Queen's Gambit Declined} (or, to be more precise, to the \textit{Orthodox Line} of the Queen's Gambit Declined).
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b1-c3,g8-f6},
+	]
+
+White will probably continue its attack which allows Black to develop its minor pieces while defending its already developed pieces: \mainline{3.Nc3 Nf6 4.Bg5 Be7}
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={e2-e3,e8-g8},
+	]
+
+A sound continuation is \mainline{5.e3 O-O 6.Nf3}, after which Black has finished development on the king-side. Black's queen-side (or light-squared) bishop is somewhat trapped due to the pawn on e6 and a good move is \mainline{6...b6}, allowing the bishop to move to the more active square b7 (which is on the long diagonal). Attacking White's bishop on g5 with \bmove{h6} is also a good option.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c8-b7,h7-h6},
+    ]
+    
+\newgame
+Instead of playing the Queen's Gambit, White could simply aim on developing their minor pieces: 
+\mainline{1.d4 d5 2.Nf3 Nf6 3.Bf4}. This opening is referred to as \textit{London System}, for which the early development of White's dark-squared bishop to f4 is a characteristic feature.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c8-f5,e2-e3},
+	]
+
+The Black beginner can now simply mirror White's moves with \mainline{3...Bf5 4.e3 e6}. Black should continue further to develop their remaining minor pieces followed by king-side castling \bmove{O-O}, finishing a solid opening.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    %color=red!75!white,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b8-d7,f8-d6},
+    ]
+    
+% Reti opening %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newgame
+A not so common opening by White, often played by more advanced players, is \mainline{1.Nf3}, known as the \textit{Réti Opening}, or the \textit{Zukertort Move}, discussed in more detail in \cref{sec:opening_reti}. Instead of starting with a pawn, White immediately develops a minor piece to a square controlling the e5-square in the center, still being flexible to react to Black's responses. If Black responds with \bmove{d5}, White wants to continue with \wmove{c4}, attacking the center from the sides (following the line of the Réti Opening).
+
+\chessboard[
+	inverse,
+	]
+	
+As a Black beginner, we do not play \bmove{d5}, leading to somewhat more complicated positions, but instead mirror White's moves, always having an eye on possible threats, resulting in a symmetrical position:
+\mainline{1...Nf6 2.c4 c5 3.Nc3 Nc6 4.g3 g6 5.Bg2 Bg7 6.O-O O-O}.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d2-d4},
+	]
+	
+White will now probably try to start some action with \mainline{7.d4}, forcing the Black player to finally break the symmetry. Black can continue with taking the pawn, starting to exchange some pieces, \mainline{7...cxd4 8.Nxd4 Nxd4 9.Qxd4 d6}. Black can now continue to play \bmove{Be6}, followed by developing their rooks with \bmove{Rc8} and \bmove{Re8}, finishing the opening with a solid position for Black.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c8-e6},
+	]
+
+% english opening %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newgame
+% new: against english opening as black: https://www.youtube.com/watch?v=N74FM5kG-PA
+A similar strategy is recommended if White decides to start with the \textit{English Opening}, which is, like the Réti Opening, considered to be a very flexible opening. It starts with \mainline{1.c4} and is, again like the Réti Opening, an opening usually played only by more advanced players.
+
+\chessboard[
+	inverse,
+    pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c7-c5},
+	]
+	
+Continuing with \mainline{1...c5} is referred to as the \textit{Symmetrical Defense}. Playing now further as
+\mainline{2.Nf3 Nf6 3.Nc3 Nc6 4.g3 g6 5.Bg2 Bg7 6.O-O O-O}
+leads to the same position as in the previous case (Black's response to the Réti Opening). Instead of playing directly \wmove{d4}, White might decide to prepare it with \mainline{7.e3}, to which Black can respond with \mainline{7...d6}. White would then continue with \mainline{8.d4}, after which Black can decide to start exchanging some material on the d4 square. Note that Black should probably play \bmove{Bd7} to defend their knight on the c6 square since it will be under double-attack after White plays \wmove{Nxd4} from White's knight and from White's light-squared bishop located on g2.
+
+\chessboard[
+	inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c5-d4,f3-d4,c8-d7},%g2-c6,
+	]
+	
+% Bird's opening %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newgame
+A not very common opening by White is \mainline{1.f4}, known as \textit{Bird's Opening} or \textit{Dutch Attack}, where White is trying to control the e5-square.
+%
+%\chessboard[
+%	inverse,
+%	]
+%	
+The Black beginner should now simply think of the opening rule, trying to control the center, and respond with \mainline{1...d5}. The game will then probably continue as \mainline{2.Nf3}, to which Black can answer by attacking the knight with \mainline{2...Bg4}.	Developing the remaining minor pieces or exchanging knight and bishop if White plays \wmove{h3} leads to a good position for Black.
+
+\chessboard[
+	inverse,
+	]
+
+% Orangutan opening %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newgame
+Another, not too common opening is \mainline{1.b4}, known as the \textit{Sokolsky Opening}, named after Russian chess player Alexey Pavlovich Sokolsky. It is also known as the \textit{Orangutan} or the \textit{Polish Opening}. White aims on playing \wmove{Bb2}, putting the bishop on a powerful diagonal.
+
+\chessboard[
+	inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c1-b2,d7-d5},
+	]
+
+Like in the previous case, Black should follow the opening rule to control the center and play \mainline{1...d5}, since the e5-square will probably be attacked by the bishop. The game might then continue as \mainline{2.Bb2 Nf6 3.e3 Bf5 4.Nf3 e6}, where Black has simply followed the opening rule to develop the minor pieces. Further continuations for Black might be \bmove{Be7}, \bmove{Nd7}, and then castling king-side.
+
+\chessboard[
+	inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f8-e7,b8-d7},
+	]
+
+Black should now be prepared for White's openings. Keep in mind that we basically just followed the general opening rules in the examples discussed.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Italian Game %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Italian Game}\label{s:opening_italian_game}
+% v1: 2025-11-29
+% https://www.365chess.com/chess-openings/Italian-Game
+The \emph{Italian Game} is considered to be one of the oldest recorded chess openings. It is known since more than 3 centuries and its name refers to medieval Italian chess masters who analyzed it. It is one of the most commonly played openings, especially at the beginner's level and it is usually recommended to be studied in detail by the beginner.
+
+\newchessgame
+\mainline{1.e4 e5 2.Nf3 Nc6 3.Bc4} This is the Italian Game. It is a King's Pawn opening and with Black's answer \bmove{e5} to White's opening move \wmove{e4}, it is labeled an \emph{open game} or \emph{double king's pawn opening}, where both sides are trying to control the center with their king's pawn. 
+\storegame{italian_game_01}
+%\par
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f8-c5, f8-e7, g8-f6},
+	]
+	
+With \wmove{Bc4}, which is the characteristic move of the Italian Game, White aims at the f7 square, Black's weakest square being only defended by the king. Black now has a few possible answers and the resulting number of variations is quite large. Some of the main lines are covered here and are indicated on the chess board by the arrows.
+
+A common reply is \mainline{3...Bc5}, where Black simply mirrors White's move aiming at White's weak f2 square. This was the main line of the Italian Game until the 19th century and is referred to as the \textit{Giuoco Piano}, the \textit{quite game}. 
+
+\storegame{italian_game_guiocopiano}
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d2-d3, c2-c3, e1-g1, b2-b4},
+	]
+
+% Italian Game, Classical Variation
+The mainline, also known as \textit{Classical Variation}, continues with \mainline{4.c3} which prepares \wmove{d4}. A typical continuation is \mainline{4...Nf6 5.d3 d6}, which is denoted as \textit{Giuoco Pianissimo}. White could not play directly \wmove{d4}, as their pawn on the e4-square needs to be defended.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={d2-d3, c2-c3, e1-g1, b2-b4},
+	]
+
+Both players have almost finished development and will likely proceed with \mainline{6.O-O a6 7.a4} to do so. With their pawn moves on the a file, both players have created escape squares for their bishops which still allow to control a large number of squares. Continuing \mainline{7...Ba7}, Black has put their dark-squared bishop on a very strong position.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f1-e1, e8-g8},
+	]
+
+%1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.c3 Nf6 5.b4 Bb6 6.d3 d6 7.a4 a5 8.b5 Ne7
+An interesting variation starts with the aggressive \variation{5.b4}, known as \textit{Bird's Attack} after English chess player Henry Edward Bird from 19th century. Black will retreat their bishop, after which both players continue their development, \variation{5...Bb6 6.d3 d6}
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={a2-a4, a7-a5, b4-b5},
+	]
+
+White will now push forward on the queen-side, \variation{7.a4 a5 8.b5}, trying to trap Black's light-squared bishop. 
+
+
+% Italian Game, Giuoco Pianissimo
+\restoregame{italian_game_guiocopiano}
+The variation \mainline{4.d3} is known as \textit{Giuoco Pianissimo}, which translates to \textit{very quite game}. White is not taking any risks here but is taking things very slowly. Often, Black develops their knight next, \mainline{4...Nf6}. White has a few options to continue, the most popular of which are indicated on the following board.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b1-c3, c2-c3, e1-g1},
+	]
+
+\restoregame{italian_game_guiocopiano}
+\mainline{4.O-O} Castling is another popular variation, where White wants to put their king into safety quickly, delaying further development of their minor pieces. 
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={g8-f6, d2-d3},
+	]
+
+Continuing with \mainline{4...Nf6 5.d3 d6 6.c3 a6 7.a4 Ba7} results in the same setup as for the Classical Variation.
+
+\restoregame{italian_game_guiocopiano}
+\mainline{4.b4} is an interesting and aggressive variation, denoted as \emph{Evans Gambit}, named after the British seafarer and chess player William Davies Evans. 
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c5-b4, c2-c3},
+	]
+
+In the mainline, Black accepts the gambit and thus takes the bishop, \mainline{4...Bxb4}. Declining the gambit, is of course, also an option, \variation{4...Bb6 5.a4 a6}. Back to the mainline of the Evans Gambit, White will attack the bishop and push their development, \mainline{5.c3 Ba5 6.d4 d6 7.Qb3}.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={c5-b4, c2-c3},
+	]
+
+Sacrificing the pawn seemed to be worth it for White and they have more central control. Black has, of course, also the option to decline the gambit with \variation{4...Bb6}.
+
+\restoregame{italian_game_01}
+Going back to the beginning of the Italian Game, an often played response by Black is \mainline{3...Nf6}, attacking the pawn on e4. This is known as the \textit{Two Knight Defense}. 
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={c5-b4, c2-c3},
+	]
+
+With the g5-square being now no longer guarded by Black's queen, White might want to try continue with \mainline{4.Ng5}, putting a lot of pressure on the f7-square. This corresponds to the Fried Liver Attack, further discussed in \cref{sec:fried_liver_attack}. Black's best defense would be \mainline{4...d5}.
+% White might be tempted to defend the pawn with \mainline{4.d3}, but must then pay attention for forks xxx???xxx
+
+\restoregame{italian_game_01}
+\mainline{3...Be7} is known as the \textit{Hungarian Defense}, considered a somewhat conservative move from Black as their bishop is not directly threatening or defending a certain piece. The idea of the move is to offer some protection to the king, while keeping the bishop flexible.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={c5-b4, c2-c3},
+	]
+
+% Italian Game, Rousseau Gambit
+\restoregame{italian_game_01}
+\mainline{3...f5} is a more uncommon response by Black, denoted as the \emph{Rousseau Gambit} after French chess player Eugène Rousseau (or the \textit{Ponziani Countergambit} after Italian chess player and priest Domenico Lorenzo Ponziani). 
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={c5-b4, c2-c3},
+	]
+
+Although this opening isn't considered too strong, Black can use it as a surprise weapon to catch White unprepared. White can accept the gambit with \mainline{4.exf5}, which is usually followed by \mainline{4...e4}. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% TO ADD: 
+%   Jerome Gambit
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+% fried liver possibility
+%Playing \variation[invar]{3...Nf6} instead might not be too good an idea, as it allows White to play \variation{4.Ng5}, which was previously not possible due to Black's queen controlling the g5 square. There is now a lot of pressure on the f7 square and this attack by White is referred to as the Fried Liver Attack, further discussed in \cref{sec:fried_liver_attack}. Black's best defense would be \variation{5...d5}.
+
+
+
+%\mainline{3...Nd4} 
+%This ostensibly weak third move by Black, known as the Blackburne Shilling Gambit, is a false gambit expectant upon White falling into the trap of capturing Black's undefended e5-pawn with 4.Nxe5. While generally considered time-wasting against more experienced players due to the loss Black is put at should the trap be avoided, it has ensnared many a chess novice and could provide a quick and easy mate against those unfamiliar with the line.
+
+
+%
+% GM Igor Smirnov, tricky openings in the Italien for White: https://www.youtube.com/watch?v=xGttvOKOemk
+%
+\subsection{Traps for White}
+% trap 1
+\newgame
+\restoregame{italian_game_01} 
+In this section, we will have a look at some traps in the Italian Game, following a video of GM Igor Smirnov~\cite{Smirnov2024}. We start with \mainline{3...Bc5}, the Guioco Piano.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+	
+Both players continue to develop their minor pieces, and Black castles on the king-side, \mainline{4.Nc3 Nf6 5.d3 O-O}
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c1-g5},
+	]
+
+As soon as Black castles, White plays \mainline{6.Bg5}, pinning Black's knight and setting up the \textit{Fishing Pole Trap}. While the Fishing Pole is a relatively well known trap, it is uncommon for Black to face it in the Italian Game and might therefore caught them unprepared in this case. %White threatening also to play Nd5
+Generally speaking, in the Fishing pole, the player setting up this trap is neglecting their center but spends time moving pieces towards the side and their pawns at the flanks. 
+
+Black often responds with \mainline{6...h6}, trying to force the bishop to move away. Instead of retreating the bishop, however, White plays \mainline{7.h4?}, sacrificing their bishop. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={c1-g5},
+	]
+
+White is hoping that the bait is too attracting and that Black takes the bishop, \mainline{7...hxg5 8.hxg5}. 
+%otherwise Nd5. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={g5-f6, h1-h8},
+	]
+	
+White is now attacking Black's knight and has opened up the h-file. The general goal for White is now to bring their queen onto the h-file. Often Black continues with \mainline{8...Nh7??}, retreating their knight, trying to close the h-file, and attacking White's pawn on g5. This was not a good idea though, Black should have played \bmove{Ng4} instead. White advances their pawn now, \mainline{9.g6}. Black cannot take with their f-pawn as it is pinned by White's bishop on the c4-square. 
+
+If Black continues with \mainline{9...Nf6??}, this is the next mistake, they should have played \bmove{d5} instead. White brings their knight closer to the black king with \mainline{10.Ng5}. With \mainline{10...d5}, Black is blocking White's light-squared bishop while simultaneously attacking it.
+
+%White takes the pawn \mainline{10.gxf7} and the game is almost over. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c4-d5},
+	]
+	
+A possible continuation is \mainline{11.Bxd5 Nxd5}. White can finish the game with a rook sacrifice \mainline{12.Rh8+ Kxh8}. Since the h5-square is no longer guarded by Black's knight, the game ends with \mainline{13.Qh5+ Kg8 14.Qh7#}.
+		
+% trap 2
+\newgame
+\restoregame{italian_game_01} 
+Let's have a look at another trap. We start again with \mainline{3...Bc5}, the Guioco Piano.
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+	
+White continues with \mainline{4.c3}, preparing \wmove{d4}. Black develops their knight, allowing White to continue their plan, \mainline{4...Nf6 5.d4}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={e5-d4},
+	]
+	
+If Black captures the pawn, \mainline{5...exd4}, White will not re-capturing it, but play instead \mainline{6.e5}. White is now threatening to take Black's knight on the f6-square and Black must react to this threat. This move by White qualifies therefore as a \textit{zwischenzug}. The best move for Black would be to counter-attack White's light-squared bishop with \bmove{d5}, after which White would play \wmove{Bb5}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+	
+Often, however, Black tries to safe their knight with \mainline{6...Ng4?!}, attacking the previously threatening pawn. If Black would take the pawn in the next move though, White would take Black's pawn on the d4-square with \wmove{cxd4} and thus fork Black's dark-squared bishop and Black's knight.
+
+White's best move would probably be to take the pawn on d4, \wmove{cxd4}. White will instead play a nice trick, \mainline{7.Bxf7?! Kxf7}, where White basically sacrifices their bishop to lure Black's king out into the wild. With \mainline{8.Ng5+}, White is not only giving the next check but also making a discovered attack by their queen on Black's knight on the g4-square.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+If the black king tries to seek shelter with \mainline{8...Kg8??}, this is a blunder and Black will loose the game (\bmove{Ke8} would have been the correct move). White might surprise Black with \mainline{9.Qb3+} who would probably expect White to take the black knight on the g4-square with their queen, and might therefore not have seen the mate-threat. The game ends with \mainline{9...Kf8 10.Qf7#}.
+
+% trap 3
+\newgame
+\restoregame{italian_game_01} 
+\mainline{3...Bc5}. Another trap, starting again with the Guioco Piano. This is a very famous trap and Black and White should both know it.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+	
+With \mainline{4.c3}, White prepares \wmove{d4}, and will do so, \mainline{4...Nf6 5.d4}  
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+Black captures the pawn, \mainline{5...exd4}, after which White will re-capture it, \mainline{6.cxd4}, Black's Black's bishop on the c5-square is now under attack and the best move for Black is \mainline{6...Bb4+}. To block the check, White plays \mainline{7.Nc3}. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+	
+White now has a full pawn center and threatens to advance a pawn and attack White's knight. Black has the possibility to take the pawn, \mainline{7...Nxe4}. White cannot re-take as their knight on c3 is pinned by Black's bishop. To unpin their knight, White castles \mainline{8.O-O}. Black takes the knight on c3, \mainline{8...Nxc3}, after which White retakes with their pawn, \mainline{9.bxc3}. Black takes again on c3 with their bishop, \mainline{9...Bxc3?}, threatening White's rook on the a1-square (the best move for Black would have been to threaten White's light-squared bishop with \bmove{d5}).
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c3-a1, c1-a3},
+	]
+	
+A strong move for White is \wmove{Qb3}, which Black should answer with \bmove{d5}. The best move for White though is \mainline{10.Ba3}, preventing Black from castling. Black must take the rook, \mainline{10...Bxa1}, it is just too tempting (\bmove{d5} would have been the best move, but this is hard to find). White can give their first check, \mainline{11.Re1+}. Black must block the check with \mainline{11...Ne7}. With continues their attack with \mainline{12.Rxe7}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={c3-a1},
+	]
+
+If Black escapes the check with \mainline{12...Kf8??}, the game is lost, \mainline{13.Rxf7+ Kg8 14.Rf8#}. While the alternative, taking White's rook with the queen, \variation{12...Qxe7}, is not directly loosing, Black's position is not very promising after \variation{13.Bxe7 Kxe7 14.Qe1+}. Continuing further with \variation{14... Qxa1}, White has a winning position.
+
+
+% trap 4
+\newgame
+\restoregame{italian_game_01} 
+The next trap also starts with the Guioco Piano, \mainline{3...Bc5}, and continues with the Guioco Pianissimo, \mainline{4.d3 Nf6}. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b1-c3, d7-d6},
+	]
+
+White develops their knight, \mainline{5.Nc3}, Black plays \mainline{5...d6}, making some space for their light-squared bishop. Next, both players bring their king into safety and castle, \mainline{6.O-O O-O}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c1-g5},
+	]
+
+\mainline{7.Bg5}, pinning Black's knight. With \mainline{7...h6}, Black tries to push the bishop away. If White would not have castled yet and thus still had their rook on h1, then \wmove{h4} would be an interesting idea. Here, however, White plays \mainline{8.Bh4}. Black's best move is \bmove{Nd4}, often, however, \mainline{8... g5?} is played, trying to annoy White. White is not annoyed though, they will likely surprise Black with \mainline{9.Nxg5 hxg5 10.Bxg5}. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c8-e6, c3-d5, d1-f3},
+	]
+
+White has sacrificed a knight, but got a strong pin as compensation: Black cannot move their Queen, otherwise they will loose their knight on f6. Black's best continuation is \bmove{Be6}. White has a lot of possibilities attacking White's pieces, e.g. \wmove{Nd5}, \wmove{Qf3}, or \wmove{Kh1} followed by \wmove{f4}. 
+
+% trap 5
+\newgame
+\restoregame{italian_game_01} \mainline{3...Bc5 4.c3}. Another trap, Guioco Piano again. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+White wants to play \wmove{d4}, challenging Black's bishop. Black's best move is generally considered as \bmove{Nf6}. If they are not too familiar with opening theory,  \mainline{4...d6} is often played. White can now directly play \mainline{5.d4}, attacking Black's bishop and pawn. Continuing with exchanging pawns, \mainline{5...exd4 6.cxd4}, and bringing Black's to a safe square while simultaneously giving the first check, \mainline{6...Bb4+}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+Usually, White would cover their king with \wmove{Nc3} or \wmove{Bd2}. Black could try to exchange pieces next and if White wants to avoid that, they can move their king instead, \mainline{7.Kf1}. White is threatening to play \wmove{Qb3}, supporting their bishop on c4 and thus putting pressure on the f7-square. 
+
+Another threat by White is \wmove{d5}, attacking Black's knight on c6 which defends the bishop on the b4-square. Black's best move is to put their bishop on different square with \bmove{Ba5}. If Black just continues to develop pieces with \mainline{7...Nf6?}, White responds with \mainline{8.d5}. Black's knight is under attack and moves away, e.g. \mainline{8...Ne5}. White exchanges knight at the e5-square, \mainline{9.Nxe5 dxe5}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d1-a4},
+	]
+	
+White has the strong move \mainline{10.Qa4+}, which not only gives White's first check but is also attacking Black's now undefended dark-squared bishop.
+
+% trap 6
+\newgame
+\restoregame{italian_game_01} 
+Let's look at another trap, again Guico Piano, \mainline{3...Bc5 4.c3 Nf6 5.d4}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+Black decides to initiate a pawn exchange at the d4-square, \mainline{5...exd4 6.cxd4}. Black's bishop escapes with a check, \mainline{6...Bb4+}. White blocks with 
+\mainline{7.Nc3}, after which Black takes the pawn e4, \mainline{7...Nxe4}. White brings their king into safety with castling, \mainline{8.O-O}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+If Black would decide to take White's knight on c3, \bmove{Nxc3}, a variation which refers to as the \textit{Greco Variation}, this would not be a good idea. White would re-take with their pawn, Black with their dark-squared bishop, and after \wmove{Qb3}, White would have put a lot of pressure on the f7-square. The correct move for Black is \mainline{8...Bxc3}. White should now play \mainline{9.d5}, not only to attack Black's knight, but also to prevent Black from playing \bmove{d5}. %
+% C54 Giuoco Piano, Moeller (Therkatz) attack
+\mainline{9...Bf6} is Black's best move. Instead of taking the knight on c6, White plays \mainline{10.Re1}, attacking Black's other knight. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c6-e7, e1-e4},
+	]
+
+The typical continuation is \mainline{10...Ne7 11.Rxe4 O-O}. White pushes their pawn, \mainline{12.d6}. If Black takes, \mainline{12...cxd6 13.Qxd6}, White's queen is not only deep in Black's territory, but also blocks the pawn on the d7-square, preventing development of Black's light-squared bishop and thus also of their rook. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={e7-f5},
+	]
+
+Black continues with \mainline{13...Nf5}, attacking White's queen. White retracts their queen, \mainline{14.Qd5}, which adds pressure on the f7-square while also attacking Black's knight on f5. With \mainline{14...d6}, Black protects their knight on f5. White's next move is tricky, \mainline{15.Ng5}. The move seems to add another attacker on the f7-square. It looks like an error, a miscalculation by White, as the g5-square is attacked by Black's bishop and Black's queen with only one defender, White's bishop on c1. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+Black's best move would be \bmove{Nh6}, adding a defender to the f7-square. Taking White's knight is, however, very tempting and so often the games continues with \mainline{15...Bxg5?! 16.Bxg5 Qxg5??}. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d5-f7},
+	]
+	
+The last move was a blunder, Black should have played \bmove{Be6} instead. Now the game is, however, over with \mainline{17.Qxf7+ Rxf7 18.Re8#}.
+
+% trap 7?
+% Canal Variation
+\newgame
+\restoregame{italian_game_01} 
+Let's have a look at another variation, where White tries to a trap on Black, starting with the Italian Game. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+In the Guico Piano, Black develops their bishop first, now Black will start with their knight, which does not make a difference here, \mainline{3...Nf6 4.d3 Bc5 5.Nc3 d6}. This position can also be reached when Black develops their bishop first.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+In this variation, White continues with \mainline{6.Bg5}, before Black castles, pinning Black's knight. Black probably continues with \mainline{6...h6}, attacking White's bishop. Since Black's king is not yet castled, White should not sacrifice their dark-squared bishop or their knight now, as as we have discussed it earlier. Instead, White exchanges their bishop for Black's knight, \mainline{7.Bxf6 Qxf6}. With \mainline{8.Nd5}, White is not only bringing their knight into a stronger position but also attacks Black's queen and the pawn on the c7-square threatening to fork Black's king and rook.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f6-d8, c2-c3},
+	]
+
+Black should move their queen back to its starting position, \mainline{8...Qd8}. White continues with \mainline{9.c3}, preparing to advance their d-pawn, \wmove{d4}. Often, Black continues with \mainline{9...Be6?!}, aiming on attacking White's knight. This is, however a mistake and Black should have played \bmove{Na5} instead. With  \mainline{10.d4}, White attacks Black's bishop but also prepares to advance the pawn further to d5, forking Black's knight and bishop. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+\mainline{10...exd4 11.cxd4}, Black needs to move their bishop, after which White will trade it off. \mainline{11...Bb6? 12.Nxb6 axb6 13.d5}, forking knight and bishop. If instead (\variation{11...Bb4+ 12.Nxb4 Nxb4 13.Qa4+}), White forces Black's knight to block the check and \wmove{d5} leads to the same winning fork. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+% other interesting source: https://www.youtube.com/watch?v=hqquaDMurZY
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Spanish Game %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Spanish game}
+\todo{Add content}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Vienna Game %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Vienna Game}
+\todo{Add content}
+\newgame
+\mainline{1.e4 e5 2.Nc3}
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f8-c4},
+	]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Ponziani Opening %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Ponziani Opening}
+% v1: 2025-12-01
+% https://www.youtube.com/watch?v=TemLSMDKSMw  <-- GothamChess
+% https://www.youtube.com/watch?v=tqZLFyZbfDk  <-- Eric Rosen:  A Beginner Lesson in the Ponziani Opening (2021)
+% https://www.youtube.com/watch?v=0yO873x_G9w  <-- Chess Talks: Ponziani Eröffnungsfallen (2021)
+% https://chesspathways.com/chess-openings/kings-pawn-opening/ponziani-opening/
+% https://chess-openings-for-beginners.blogspot.com/2009/11/ponziani-opening.html
+% https://lichess.org/study/LLGCk9Bp/p4clScVW
+\newgame
+One of the most common opening moves in chess are \mainline{1.e4 e5 2.Nf3 Nc6}. The \textit{Ponziani Opening}, after the Italian chess player Domenico Lorenzo Ponziani, who analyzed it first at the early 18th century, continues with the rather surprising move \mainline{3.c3}, which has the idea to build a strong pawn center with \wmove{d4} blocking however the c3 square for the White knight. 
+\storegame{Ponziani_beginning}
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d2-d4},
+	]
+
+It is no good idea for Black to develop their dark-squares bishop, aiming on White's weak f2-square, as this allows White to immediately build up a very strong center with \mainline{3...Bc5?! 4.d4}. After Black trades pawns at d4, \mainline{4...exd4 5.cxd4}, White still has a strong center and Black's bishop is under attack. Black responds with a check, \mainline{5...Bb4+}, which White blocks with their knight, \mainline{6.Nc3}.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d4-d5,f1-d3},
+	]
+
+White will probably attack the knight on c6 next with \wmove{d5}, then finishing development with \wmove{Bd3} followed by castling. If Black, instead of giving check to the White king with their bishop, decides to retreat their bishop, \variation{5...Bb6}, White can simply attack Black's other knight after it has been developed to f6 with \wmove{e5}.
+
+\restoregame{Ponziani_beginning}
+Let's go back to the beginning of the Ponziani Opening. Instead of developing the dark-squared bishop, Black could decide to defend their pawn on e5 with \mainline{3...d6}. This is, however, not a good idea for Black and the game is likely to continue with \mainline{4.d4 Nf6}.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={h2-h3},
+	] 
+
+White can now try to set up a little trap with \mainline{5.h3}, which blocks \bmove{Bg4}. Playing \bmove{Be6} instead is not a good idea, as White will then win material with \wmove{d5}, and Black has fallen for the simple trap. If Black takes the undefended pawn on e4 with \mainline{5...Nxe4}, White will threaten Black's other knight with \mainline{6.d5}, followed by a retreat with \mainline{6...Ne7}. Now, White can make a nice fork, finalizing another trap with \mainline{7.Qa4+}, winning a knight in the next move.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={a4-e4},
+	] 
+
+\restoregame{Ponziani_beginning}
+The most common response of Black to the Ponziani is \mainline{3...Nf6}, attacking White's undefended pawn on e4, followed by \mainline{4.d4}. 
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={e5-d4, f6-e4},
+	]  
+
+Black has now two possibilities to take a central pawn of White, either with their knight on f6 or with their pawn on e5. Continuing with \mainline{4...Nxe4 5.d5}, White threatens Black's knight on c6 and also the pawn on e5. Black will likely retreat their knight, \mainline{5...Ne7}, (\variation{5...Na5}) is not a good idea as White could trap the knight with \wmove{b4}, followed by White re-capturing Black's pawn, \mainline{6.Nxe5}.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f1-c4,d1-f3},
+	]
+
+The resulting position is somewhat unique as three knights are lined up on the e-file. White will now continue to develop their light-squared bishop and their queen, aiming on the weak f7 square. If Black makes the probably somewhat obvious move of attacking the knight with \mainline{6...d6??}, this is not a good idea (they should have played (\variation{6...Nf6}) instead): White responds with \mainline{7.Bb5+} and not (\variation{7.Qa4+}). If Black blocks the check with the c-pawn, White will re-take with the d-pawn, \mainline{7...c6 8.dxc6}.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f1-c4,d1-f3},
+	]
+
+Taking White's knight on e5 is tempting, but not a good idea, 
+\mainline{8...dxe5?? 9.cxb7+ Bd7 10.Qxd7+ Qxd7 11.bxa8=Q+}. The result is a winning position for White. 
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    %markmoves={f1-c4,d1-f3},
+	]
+
+If Black decides to not take the knight on e5, it will not help much, although the position might be slightly less worse for Black, (\variation{7...c6 8.dxc6 bxc6 9.Nxc6 Nxc6 10.Bxc6+}), forking three pieces, where White should take Black's active knight on the e4 square instead of the passive rook on a8. Blocking the check with the bishop does not help Black either, (\variation{7...Bd7 8.Bxd7 Qxd7 9.Nxd7}), leading again to a winning position for White. 
+
+\restoregame{Ponziani_beginning}
+Going back to Black's most popular move in the Ponziani Opening, \mainline{3...Nf6}, followed by \mainline{4.d4}, Black can also take the pawn on d4, \mainline{4...exd4}, instead of taking the pawn on e4 with the knight as just discussed.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={e4-e5, f6-d5},
+	]
+
+White should not re-take the pawn on d4 as their pawn on e4 is not defended. Instead, \mainline{5.e5} is the best move, threatening Black's knight, which will usually retreat with \mainline{5...Nd5}. White now has the option to develop their queen \wmove{Qb3}, followed by their bishop \wmove{Bc4}, building up some pressure on the f7 square trying to make Black's king nervous. The more natural move is probably \mainline{6.Bc4}, developing the light-squared bishop and attacking a knight.
+
+\chessboard
+
+After \mainline{6...Nb6} White's light-squared bishop is under attack and thus White will retreat, \mainline{7.Bb3}, ensuring that the bishop is still on a very active square. If White manages to take Black's pawn on d4, White will have a very strong center that is quite annoying for Black to deal with. 
+
+\restoregame{Ponziani_beginning}
+The strongest answer to the Ponziani by Black is \mainline{3...d5}~\cite{ChessOpeningExplorer-Ponziani.2023}.
+
+\chessboard
+
+%\mainline{1.e4 e5 2. Nf3 Nc6 3. c3 Nf6 (3... Bc5 4. d4 exd4 5. cxd4 Bb4+ 6. Nc3) (3... d5 4. Qa4 dxe4 (4... Bd7 5. exd5 Nd4 6. Qd1 Nxf3+ 7. Qxf3) (4... f6 5. Bb5 Ne7 6. exd5 Qxd5 7. d4) 5. Nxe5 Bd7 6. Nxd7 Qxd7 7. Qxe4+) 4. d4 exd4 (4... Nxe4 5. d5 Ne7 6. Nxe5 d6 7. Bb5+ c6 8. dxc6 bxc6 (8... Qb6 9. cxb7+ Kd8 10. Nxf7+ Kc7 11. bxa8=N+) 9. Nxc6 Nxc6 10. Bxc6+ Bd7 11. Bxe4) 5. e5 Nd5 (5... Qe7 6. cxd4 d6 7. Bb5) 6. Qb3 Nb6 7. cxd4}
+
+It is not a good idea to play the Ponziani Opening at the top level, but at beginner and intermediate level, 
+%maybe up to 2000 elo xxxROSENxxx 
+you might be able to get your opponent unprepared.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Philidor defense %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Philidor Defense}\todo{Add content}
+\todo{Check content}
+\newgame
+The \textit{Philidor Defense} is a King's Pawn Opening which can be reached via different move orders, where the most popular is \mainline{1.e4 e5 2.Nf3 d6}. This set-up makes it difficult for White to form a good attack on the center, as Black is already supporting their pawn on e5. The disadvantage though is that Black blocks their dark-squared bishop.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d2-d4},
+	]
+
+The Philidor Defense was more popular in the past and isn't played too often nowadays, although it is still considered a reliable defense for Black~\cite{philidor_chesspathways}. It is named after the French composer and chess player François-André Danican Philidor from the 18th century. The most popular continuation by White is \mainline{3.d4}, challenging Black's pawn and opening the diagonal for their dark-squared bishop.
+\storegame{philidor_defense_basis_setup}
+
+A possible continuation is the \textit{Exchange Variation}, where Black takes the pawn on d4 and White retakes with their knight, \mainline{3...exd4 4.Nxd4}.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={g8-f6, b1-c3, f8-e7},
+	]
+
+Black will probably continue with developing their king-side pieces and White will activate their second knight, \mainline{4...Nf6 5.Nc3 Be7}. 
+
+\chessboard
+
+The Exchange Variation is often not recommended to play for Black~\cite{philidor_simplifychess}, as Black loses central control. Black has, however, as relative solid position.
+
+\restoregame{philidor_defense_basis_setup}
+Instead of taking the pawn on d4, Black might not want to give up central control so easily and plays \mainline{3...Nd7} defending the pawn on d4. This is known as the \textit{Hanham Variation}, after the American chess player James Moore Hanham. It is a tricky line for Black leading to solid but passive position.
+
+\chessboard
+
+The game will typically continue with both players developing their pieces, \mainline{4.Nc3 Nbd7 5.Bc4}, developing the bishop to its most active square, and then further with \mainline{5...Be7}, Black finishing their king-side development. White can now castle, \mainline{6.O-O}.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={g8-f6, e5-d4, b7-b6, c8-b7},
+	]
+
+Black will now probably aim on developing their second knight, maybe take the pawn on d4 to release some tension, or prepare to fianchetto the light-squared bishop to double-attack White's pawn on e4.
+
+\restoregame{philidor_defense_basis_setup}
+In the \textit{Nimzowitsch Variation}, Blacks plays \mainline{3...Nf6} attack White's pawn on e4, trying to lure White into taking the pawn on e5. 
+
+\chessboard
+
+If White does indeed take the pawn, \mainline{4.dxe5}, Black will take White's pawn on e4, \mainline{4...Nxe4}, followed by White taking another pawn with \mainline{5.exd6}. Black retakes with \mainline{5...Bxd6} and now has an advantage in development.
+
+\chessboard
+
+\newgame
+Going back to the basic set-up of the Philidor Defense, \mainline{1.e4 e5 2.Nf3 d6}, there are some funny traps White can put up. 
+
+\chessboard
+
+Next, White is not advancing the d-pawn, but instead develop their light-squared bishop to its most active square, \mainline{3.Bc4}. Black might respond with developing their knight, so will White, \mainline{3...Nc6 4.Nc3}. If Black now plays \mainline{4...Bg4}, White can attack it with \mainline{5.h3}, pushing it backwards, \mainline{5...Bh5}
+
+\chessboard
+
+Now White can setup the trap and play the surprising move \mainline{6.Nxe5}, taking Black's pawn on e5 but sacrificing their queen. If Black takes the queen, \mainline{6...Bxd1}, White will take Black's pawn on the f7-square with \mainline{7.Bxf7+}. Black cannot take with their king, which needs to move \mainline{7...Ke7}. Now White can finish the game with \mainline{8.Nd5#}
+
+\chessboard
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Playing against 1d4%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Playing against 1.d4}
+\todo{Check content and move to different position}
+%https://www.youtube.com/watch?v=AlS0KAxAx-g
+\newgame
+Referred to as Queen's pawn opening, \mainline{1.d4}, likely be followed by \wmove{c4}, which opens the diagonal for White's queen, then \wmove{Nc3} defending the e4-square, then \wmove{e4}.
+
+\chessboard[
+	inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c2-c4,b1-c3,e2-e4},
+	]
+	
+As a black player, we want to make it difficult for White to achieve his plans, as otherwise they would have full central control. Black has several solid openings to prevent this. 
+
+The most popular response to the Queen's pawn opening is \mainline{1...Nf6}. In contrast to (\variation{1...d5}), this is more flexible and Black can easily adjust to White's next move.
+
+\chessboard[inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c2-c4,e7-e6,d7-d5},
+    ]
+
+White's next move is likely \mainline{2.c4}, opening the Queen's diagonal. Black responds with \mainline{2...e6}, preparing \bmove{d5} and opening the diagonal for the Black bishop. %
+\storegame{queens_pawn__before_3Nc3} %
+If White continues with \mainline{3.Nc3}, Black can now pin the knight with \mainline{3...Bb4}. 
+
+\chessboard[inverse]
+
+This opening is referred to as the \textit{Nimzo-Indian Defense} and is considered a very strong opening for Black. As soon as White plays \wmove{a3}, it is generally recommended that Black takes the knight with \bmove{Bxc3}. Possible continuations for Black are to attack the center with \bmove{c4} or \bmove{d4} or fianchetto the light-squared bishop to b7.
+
+\restoregame{queens_pawn__before_3Nc3}
+White would probably try to avoid playing against the Nimzo-Indian Defense by playing \mainline{3.Nf3}, which is sometimes referred to as the \textit{anti Nimzo-Indian Defense}. % according to https://www.youtube.com/watch?v=AlS0KAxAx-g
+Black could now respond with \mainline{3...b6}, which is knows as the \textit{Queen's Indian Defense}, preparing to fianchetto the bishop, thus putting some pressure on the center. Putting the bishop onto the a6-square would be another option, attacking White's pawn on c4.
+
+\chessboard[inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c8-b7},
+    ]
+    
+\restoregame{queens_pawn__before_3Nc3}
+Another response by Black to White's \mainline{3.Nf3} %
+\storegame{queens_pawn__after_3Nc3}%
+is the \textit{Bogo-Indian Defense} (or \textit{Bogoljubow-Indian Defense} to use to long name) which continues with \mainline{3...Bb4+}. 
+
+\chessboard[inverse]
+
+White has to block the check, either with the knight or the bishop. If the knight blocks the check, Black can use similar ideas as in the Nimzo-Indian Defense. If White plays \mainline{4.Bd2}, which is the main continuation in the Bogo-Indian Defense, Black has multiple options. Simply trading bishops is achieved via \bmove{Bxd2+} or, involving some more complicated pawn structures, via \bmove{c5} or \bmove{a5}. Playing \bmove{Qe7}, Black threatens to win a pawns if White now takes the bishop on f4. Another option would be to retreat the bishop, \bmove{Be7}.
+
+\newgame
+Another possible response to the Queen's Pawn Opening is \mainline{1.d4 Nf6 2.c4 g6}, where Black is planning to fianchetto its dark-squared bishop. 
+
+\chessboard[inverse]
+
+Continuing with \mainline{3.Nc3 Bg7 4.e4}, White takes the full center. With \mainline{4...d6}, Black prepares to challenge it. This opening is referred to as the \textit{King's Indian Defense}
+
+\chessboard[inverse]
+
+Black has now the advantages that they can castle king-side in the next move, followed by attacking the center with either \bmove{e5} or \bmove{c5}.
+
+\restoregame{queens_pawn__after_3Nc3}
+In a slightly different set-up, Black not fianchetto their dark-squared bishop, but challenge White's pawn on c4 directly with \mainline{3...d5}, which is the \textit{Grunfeld Defense}. 
+
+\chessboard[inverse]
+
+Black usually plans to put pressure on the center with \bmove{Nc6}, \bmove{c5}, and \bmove{Bg7}.
+
+\newgame
+Another possibility is given by the provided by the line \mainline{1.d4 Nf6 2.c4 c5}
+
+\chessboard[inverse]
+
+White should not capture here, as it would mean giving away part of the central control. Often, White advances the d pawn with \mainline{3.d5}. This is referred to as the \textit{Benoni Defense}. Black often continues with attacking the pawn, \mainline{3...e6}. 
+
+\chessboard[inverse]
+
+If White would take the pawn, Black can take back with \bmove{fxe6}. If White advances their pawn with \wmove{d6}, Black plays \bmove{Qb6}, attacking it. Often, though, White will defend their pawn with \mainline{4.Nc3}. Pawns can be exchanged now, \mainline{4...exd5 5.cxd5}. Black can now aim on fianchetto the dark-squared bishop, castle king-side, and probably aim on attacking White's pawn on d5. 
+
+\chessboard[inverse]
+
+\newgame
+The Benoni Defense is considered an aggressive opening and can be fun to play. 
+
+Another common response to the Queen's Pawn Opening is \mainline{1.d4 d5}. Usually, White will continue with \mainline{2.c4}, which is the \textit{Queen's Gambit}. If Black does not take the pawn but plays \mainline{2...e6}, they decline the gambit, hence the name \textit{Queen's Gambit declined}.
+
+\chessboard[inverse]
+
+If White takes the pawn with \wmove{cxd5}, Black can simply take back \bmove{exd5}, having solid control of the central squares e4 and c4. If White does not take the pawn, but decides to develop their pieces, the opening corresponds then to a very classical opening, where Black can follow the opening principles and focus on developing their pieces.
+
+\newgame
+Another possible continuation from the Queen's Gambit is the \textit{Slav Defense}, which goes as \mainline{1.d4 d5 2.c4 c6}
+
+\chessboard[inverse]
+
+The typical continuation is \mainline{3.Nf3 Nf6 4.Nc3 e6}, known as the \textit{Semi-Slav Defense}.
+
+\chessboard[inverse]
+
+Black will now focus on developing their queen-side pieces.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% French Defence %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{French Defense}\label{s:opening_french_defense}
+% v1: 2025-11-16
+%
+% some additional notes
+%   leads to semi-open games
+%
+%
+\newgame
+The \emph{French Defense} is a relatively popular opening (behind the Spanish and the Sicilian which is more popular among very strong players) and considered to be a strong weapon by Black against White's most popular opening move \wmove{e4}, as a lot of White players are not too well prepared against this opening. 
+It is named after a match played by correspondence between London and Paris in 1834. The opening begins with the moves \mainline{1.e4 e6}. With this move, Black prepares \bmove{d5} to challenge White's pawn on e4. Throughout the game, Black is trying to develop an attack on the queenside whereas White is aiming on kingside attacks. With this move Black also protects their weakest pawn on f7 by simply blocking it.
+
+%\showboard
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d7-d5,d2-d4},
+	]
+
+One of the drawbacks of the French Defense for Black is that their queenside bishop at c8 is blocked by their pawn at e6 and it may remain passive for the rest of the game. Black often has to deal with a cramped position early in the game. 
+The game usually continues with \mainline{2.d4 d5}. From here, a number of variations exists of which the four most popular are indicated in the following chess board. They will be briefly discussed on the following pages.
+\storegame{french_defence_01}
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b1-c3,e4-d5,b1-d2,e4-e5},
+	]
+
+%
+% french defense: main line
+%
+%\restoregame{french_defence_01}
+\mainline{3.Nc3}
+\storegame{french_defence_01.1}
+White defends their pawn on e4. This is the most common variation played (which can result in heavily theoretical lines), %https://simplifychess.com/french-defense/
+and therefore referred to as the \textit{main line}~\cite{french_defense_wikipedia}, and Black has basically three possibilities. 
+% 
+% french defense: main line - Rubinstein Variation
+% 
+One option is the \emph{Rubinstein Variation} with \mainline{3...dxe4}, named after the Polish chess player Akiba Rubinstein. White has here more space in the center, which Black will eventually attack with \bmove{c5}. \mainline{4.Nxe4} is the natural continuation.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={b8-d7,c8-d7},
+	]
+	
+Black usually plays now \bmove{Nd7} or \bmove{Bd7}, activating their light-squared bishop.
+
+%
+% french defense: main line - Winawer Variation
+%
+\restoregame{french_defence_01.1}
+The second option for Black to respond to \variation{3.Nc3} is
+\mainline{3...Bb4} which is referred to as the \emph{Winawer Variation}, named after Polish chess player Szymon Winawer. Black pins the knight at c3 and threatens to exchange it.
+
+\chessboard
+
+The main line in the Winawer Variation goes as \mainline{4.e5 c5 5.a3 Bxc3+ 6.bxc3} which gives White spatial advantages on the kingside, where Black has weakened their position by tradition the dark-squared bishop. Black will try to make use of the double pawn and the open b-file.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={g8-e7,d8-c7},
+	]
+
+\restoregame{french_defence_01.1}
+A third possibility for Black to respond to \variation{3.Nc3} is \mainline{3...Nf6}, the \emph{Classical Variation}. Playing \mainline{4.e5 Nfd7 5.f4} results in the \emph{Steinitz Variation}. 
+\restoregame{french_defence_01.1}
+\hidemoves{3...Nf6}
+Another option is \mainline{4.Bg5}, pinning the bishop and threatening to play \wmove{e5} next.
+
+\restoregame{french_defence_01.1}
+\hidemoves{3...Nf6}
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={e4-e5,c1-g5},
+	]
+
+% french defense: Exchange Variation
+\restoregame{french_defence_01}
+\mainline{3.exd5 exd5} is the \emph{Exchange Variation}. Unlike all others variation in the French Defense, the structure on the board becomes symmetrical. White wants to avoid a closed structure and allows for other strategies. This is often recommended for players with little knowledge about the opening theory. % https://simplifychess.com/french-defense/
+It is not uncommon for such games to end in an early draw.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={f1-d3,g1-f3,c2-c4},
+	]
+	
+White can now continue development with \wmove{Nf3} or \wmove{Bd3} or, alternatively, challenge Black's pawn on e5 with \wmove{c4}. 
+
+% french defense: Tarrasch Variation
+\restoregame{french_defence_01}
+\mainline{3.Nd2} is the \emph{Tarrasch Variation}, named after German chess player Siegbert Tarrasch. White is defending their pawn at e4.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c7-c5,g8-f6,b8-c6,f8-e7},
+	]
+
+In contrast to \variation{3.Nc3}, this move does not block the c-pawn from supporting the white pawn at d4. It blocks, however, White's dark-squared bishop. This is a popular variation, being less aggressive than the main line. 
+% https://simplifychess.com/french-defense/
+Black has multiple solid options to continue as indicated by the arrows on the chessboard. 
+
+% french defense: Advance Variation
+\restoregame{french_defence_01}
+\mainline{3.e5} White is advancing its e-pawn and this variation is thus known as the \emph{Advance Variation}. 
+% or the \emph{Nimzovitch Variation}. <-- NO, only if 1. e4 e6 2. d4 d5 3. e5 c5 4. Qg4
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={c7-c5},
+	]
+
+In this variation, Black has clearly more space on the queenside and will thus try to develop an attack on this side. This is a typical strategy in the French Defence.
+By not exchanging pawns at d5 and blocking the square e5, Black's bishop is locked at c8. With \bmove{c5} and subsequent \bmove{Nc6} or \bmove{Qb6}, Black can then put a lot of pressure on the d4 square. The additional move \bmove{f6} attacks the pawn chain from the other side. White can try to defend their pawn on e5 with \wmove{f4}, which Black can answer with \bmove{g5} or with \bmove{fxe5}.
+
+The main line in the Advance Variation continues with \mainline{3...c5 4.c3 Nc6 5.Nf3}.
+
+\chessboard[
+	%inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d8-b6,c8-d7,g8-h6},
+	]
+
+Known for its solidity and resilience, the French Defence is hard to play against because it differs so much from other black defenses.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Sicilian Defence %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sicilian Defence}\label{s:opening_sicilian}
+\todo{Check content}
+%
+% Nijdorf most common and most complicated Sicilian Defense on top level
+% also not the dragon variation
+% as a newbie, using the Alapin is a very good way to deal with the Sicilian, also easiest to learn
+%
+
+The Sicilian Defence is a very strong answer to White most famous opening move \wmove{e4}. Currently, Black scores slightly better with it than when using the French Defence. 
+
+\newgame
+\mainline{1.e4 c5}. By advancing the c-pawn, which is sometimes also referred to as a flank pawn (like the f-pawn), Black is controlling the d4-square and thus directly aiming to control the centre. Furthermore, Black is probably aiming on developing their knight, \bmove{Nc6}, which would add even more pressure to d4-square. Unlike Blacks most common answer \variation{1...e5}, the symmetry is broken early on, leading to quite different games. Throughout the Sicilian Defence, the c5 pawn is often exchanged against the d4 pawn.
+
+\showboard
+
+The mainline continues with \mainline{2.Nf3 d6}. Black is preparing \bmove{Nf6}. Common variations are \variation{2...Nc6} and \variation{2...e6}. If White plays \wmove{d4} in the third move, these openings are referred to as the \emph{Open Sicilian}.
+
+\showboard
+
+The mainline goes as \mainline{3.d4 cxd4 4.Nxd4 Nf6 5.Nc3}.
+\storegame{Sicilian_defence_01}
+
+\showboard
+
+\hidemoves{5...a6}
+Black has four main possibilities to continue: \emph{Najdorf Variation} with \variation{5...a6}, \emph{Dragon Variation} with \variation{5...g6}, \emph{Classical Variation} with \variation{5...Nc6}, and \emph{Scheveningen Variation} with \variation{5...e6}. These variations are briefly described in the following.
+
+\restoregame{Sicilian_defence_01}
+\mainline{5...a6} Najdorf Variation. This is the most popular answer by Black. The idea is to prepare \bmove{e5} and also to block the b5-square from the white knight.
+
+\showboard
+
+White's most popular answer against the Najdorf Variation is the \emph{English Attack} with \mainline{6.Be3}. The idea is to prepare \wmove{f3}, \wmove{Qd2}, \wmove{g4} and to castle queenside. Possible answers of Black include \bmove{e6}, \bmove{e5} and \bmove{Ng4}.
+
+\restoregame{Sicilian_defence_01}
+\mainline{5...g6} Dragon Variation. Black wants to fianchetto the dark-squared bishop. 
+
+\showboard
+
+A strong answer by White is the \emph{Yugoslav Attack} with \mainline{6.Be3 Bg7 7.f3 O-O 8.Qd2 Nc6} resulting in a very sharp game with complicated positions. 
+
+\showboard
+
+\restoregame{Sicilian_defence_01}
+\mainline{5...Nc6} Classical Variation. Black is simply developing both its knights. 
+
+\showboard
+
+The \emph{Richter-Rauzer Attack} is White's most common answer with \mainline{6.Bg5}. White is threatening a double pawn for Black on the f-file with \wmove{Bxf6}.
+
+\restoregame{Sicilian_defence_01}
+\mainline{5...e6} Scheveningen Variation. Black prepares to castle kingside. 
+
+\showboard
+
+A common continuation is the \emph{Kerres Attack} with \mainline{6.g4}. With the additional move \wmove{g5}, White wants to drive away the knight from the f6-square. Black usually prevents this with \mainline{6...h6} which, however, makes castling less attractive for Black on that side. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Against Sicilian Defence %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Playing against the Sicilian Defense}
+\todo{Check content}
+% https://www.youtube.com/watch?v=WisFv1fkRy4
+\newgame
+\mainline{1.e4 c5}
+The more you advance in chess, the more often you will have to have the Sicilian Defense when playing as White. A nice response by White not requiring to memorized too many moves and which is not played too often and might therefore hit Black unprepared, is the \textit{Alapin Variation}, \mainline{2.c3}.
+
+\chessboard[
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    %padding=1ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d2-d4},
+	]
+	
+The idea is to play \wmove{d4}, trying to take full control of the center. Playing against the Alapin Variation can be tricky and it is easy for Black to fall into some traps. A natural response by Black is \bmove{Nc6}, which is however already a mistake. If Black response with \bmove{d6}, White can simply play \wmove{d4}, taking control of the center. Following the mainline, \mainline{2...Nc6 3.d4}, White has taken the center. Typically, the games continues with \mainline{3...cxd4 4.cxd4}, and White is still controlling the center.
+
+\chessboard
+
+White is now threatening \wmove{d5}, which would force Black's knight away. To prevent that, \mainline{4...d5} is often played. Instead of taking the pawn, White can now increase the pressure on the d5-square by playing \mainline{5.Nc3}. Black will now often take the pawn with \mainline{5...dxe4}.
+
+\chessboard
+
+Instead of re-taking with the knight, White now pushes forward, \mainline{6.d5}, trying to force Black to move their knight. If Black decides to play \bmove{Nb4}, that would be a major mistake, as \wmove{Qa4+} wins the knight. In most cases, the game will continue with \mainline{6...Ne5}. White now has the possibility to attack Black's pawn on e4 by developing their queen, \mainline{7.Qa4+}
+
+\chessboard
+
+\mainline{7...Bd7 8.Qxe4 Ng6} is a typical continuation. White might be tempted now to continue developing their pieces, but there is an interesting idea that might work, \mainline{9.Nb5}, 
+
+\chessboard
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Scandinavian Defence %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Scandinavian Defence}\label{s:opening_scandinavian}
+\newgame
+The Scandinavian Defence (or \emph{Center Counter Defence}) is another possible answer by Black to \wmove{e4}. It is one of the oldest recorded chess openings and starts with \mainline{1.e4 d5}.
+
+\showboard
+
+White then usually takes the pawn with \mainline{2.exd5}. One of the rare variations where the pawns are not directly exchanged is \variation{2.Nc3} which can be transformed into the \emph{Dunst Opening} after the additional move \bmove{d4} or \bmove{dxe4}. White can also play \variation{2.e5!?}, Black can then play \bmove{c5} and develop the queenside bishop. 
+
+Black has two major options to continue from here on, the first is \mainline{2...Qxd5} which is mostly followed by \mainline{3.Nc3}. White attacks the queen and develops a piece thus gaining a tempo.
+
+\showboard
+
+The most common continuation is \mainline{3...Qa5}. A possible alternative is the aggressive \variation{3...Qd6}, referred to as the \emph{Pytel Variation}. A rare alternative is the \emph{Patzer variation} with \variation{3...Qe5+?!}. 
+
+A common line then continues with \mainline{4.d4 c6 5.Nf3 Nf6 6.Bc4 Bf5 7.Bd2 e6} resulting in a pawn structure similar to the one from the \emph{Caro-Kann Defence}.
+
+\showboard
+
+\newgame
+\hidemoves{1.e4 d5 2.exd5}
+The second major option is \mainline{2...Nf6} which mostly continues with \mainline{3.d4} and is referred to as the \emph{Modern Variation}. The main motivation here is to achieve quick development. 
+
+\showboard
+
+The mainline then goes as \mainline{3...Nxd5 4.c4 Nb6}. Possible variations include \variation{4...Nf6}, sometimes called the \emph{Marshall Retreat Variation} and \variation{4...Nb4?!}, the tricky \emph{Kiel Variation}.
+
+\showboard
+
+
+
+
+The Scandinavian is thus arguably Black's most "forcing" defense to 1.e4, restricting White to a relatively small number of options. This has helped to make the Scandinavian Defense fairly popular among club-level players, though it is rare at the Grandmaster level.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Caro-Kann Defense %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Caro-Kann Defense}\label{s:opening_carokann_defence}
+\todo{Check content}
+%http://dreamquestgames.com/best-chess-openings-caro-kann-defense/
+%https://www.youtube.com/watch?v=PMrqDK-H6G4
+% https://www.houseofstaunton.com/blog/caro-kann-defense-good-for-beginners-and-grandmasters.html
+\newgame
+The Caro-Kann Defense is a very strong response to White's most popular opening \mainline{1.e4}. It is considered reliable and a ``\textit{a great fighting weapon}''~\cite{Scharndorf.2010} and thus often played by Grandmasters~\cite{GMBryanSmith.2015}.
+%Played often by Grandmasters and generally considered a strong chess opening, the analysis looks promising for Black as they often reach a better pawn structure in the end game. 
+It gives Black the chance to take back the initiative and dominate the opening. The Caro-Kann Defense is named after the chess players Horatio Caro of England and Marcus Kann of Austria, who analyzed this opening in 1886. 
+\newgame
+It is characterized by the moves \mainline{1.e4 c6}, with the usual continuation \mainline{2.d4 d5}.
+\storegame{CaroKann_01}
+\chessboard
+
+White has now basically three options, push the e-pawn, exchange pawns on d5, or defending the e-pawn with some developing moves. The \textit{Classical Variation}, also known as the \textit{Capablance Variation} after the Cuban Grandmaster José Capablanca, follows the last of those three options and thus continues with \mainline{3.Nc3 \xskakcomment{ (or \wmove{Nd2})} dxe4 4.Nxe4 Bf5}.
+
+\chessboard
+
+Black initiates exchange of pawns at e4 in this variation and develops their light-squared bishop early. The latter is one of Black's main ideas in the Caro-Kann defense: develop the light-squared bishop early, close the pawn chain by \bmove{e6}, and then continue to develop the remaining pieces. 
+
+Black’s bishop at f5 forces White to move their knight or defend it. White can continue with defending their knight via \wmove{Bd3} or \wmove{f3}, but the most popular continuations is \mainline{5.Ng3}, threatening Black's bishop. Usually, Black answers with \mainline{5...Bg6}, ensuring that the bishop is still at an active square. The typical continuation is \mainline{6.h4}, where White has the idea to push further to h5, threatening Black's bishop, which Black counters with \mainline{6...h6} creating an escape for the bishop. 
+
+\chessboard.
+
+With \mainline{7.Nf3}, White prepares the move \wmove{Ne5}, attacking Black's bishop. Black can simply prevent this by playing \mainline{7...Nd7}. The opening finishes with \mainline{8.h5 Bh7 9.Bd3 Bxd3 10.Qxd3 e6}.
+
+\chessboard
+
+Often, White will develop their dark-squared bishop next, \wmove{d2} or \wmove{d2}, followed by castling \wmove{O-O-O} and then usually tries to attack on the king side. Black often continues their development with \bmove{Nf6} and \bmove{Be7} or \bmove{Bb4}, followed by castling \bmove{O-O}.
+
+\restoregame{CaroKann_01}
+In the \textit{Modern Variation}, Black also exchanges pawns at e4, but then develops its knight: \mainline{3.Nc3 \xskakcomment{ (or \wmove{Nd2})} dxe4, 4.Nxe4 Nd7}. It is also referred to as \textit{Smyslov Variation} or \textit{Karpov Variation}, named after the chess players Vasily Smyslov and Anatoly Karpov respectively.
+\chessboard
+
+\restoregame{CaroKann_01}
+The easiest continuation of the Caro-Kann defense is probably the \textit{Exchange Variation}, where White initiates exchanging pawns at d5: \mainline{3.exd5 cxd5}. 
+
+\chessboard
+
+One possibility to continue for White is attacking the pawn at d5 with \mainline{4.c4}, which is referred to as the \textit{Panov-Botvinnik Attack} after the Soviet chess players Vasily Panov and Mikhail Botvinnik. This aggressive variation is often played on a top-level and typically continues as \mainline{4...Nf6 5.Nc3}, resulting in the basic position of the Panov-Botvinnik Attack. 
+
+\chessboard[
+	inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={g7-g6, b8-c6, e7-e6},
+	]
+	
+Black has now three options, \bmove{g6} to prepare \bmove{Bg7}, developing the knight with \bmove{Nc6}, or advancing the e-pawn \bmove{e6} to prepare developing Black's dark-squared bishop. The latter option is the main move followed by some basic development, \mainline{5...e6 6.Nf3 Bb4}. Next, usually White takes the e5 pawn, followed by Black re-taking with their knight threatening together with the bishop White's knight on c3, \mainline{7.cxd5 Nxd5}.
+
+\chessboard[
+	inverse,
+	pgfstyle=straightmove,
+    arrow=stealth,
+    linewidth=.4ex,
+    color=black!50,		% 50% black, 50% white
+    pgfstyle=straightmove,
+    shortenstart=.3ex,
+    showmover=true,
+    markmoves={d5-c3, b4-c3},
+	]
+
+\restoregame{CaroKann_01}
+Going back to the beginning of the Exchange Variation, that is \mainline{3.exd5 cxd5}. This is often played by White if they don't know the theory of the Caro-Kann defense very well, as it simplifies the position and they can aim on developing their pieces. The main continuation is \mainline{4.Bd3}, which blocks the f5 and g4 square for Blacks's light-squared bishop. \mainline{4...Nc6 5.c3 Nf6 6.Bf4}
+
+\chessboard
+
+Further along the mainline of this variation, \mainline{6...Bg4 7.Qb3 Qd7 8.Nd2 e6 9.Nf3 Bd6}. Both players now usually castle, finishing their development and are ready for the midgame.
+
+\chessboard
+
+
+\restoregame{CaroKann_01}
+In the \textit{Advanced Variation}, White pushes their pawn further, while Black develops their light-squared bishop early, \mainline{3.e5 Bf5}, which again follows the main idea of the Caro-Kann as explained earlier. Instead of developing the bishop, Black can attack the center (\variation{3...c5 4.dxc5}) which also has some popularity.
+
+\chessboard 
+
+The Advanced Variation was not considered very solid for many years with Black now having position similar to that of the French Defence. (??) After exchanging the light-squared bishops, Black would then try to make use of White's light-squared weakness. The variation has, however, gained some popularity when continuing with the aggressive line \mainline{4.Nf3 e6 5.Be2} or (\variation{4.Nc3 e6 5.g4}) and is often found in top-level games resulting in somewhat complicated positions (and might thus want to be avoided at beginner or intermediate level).
+
+\chessboard 
+
+The game continues as \mainline{5...Ne7 6.O-O Nd7}, resulting in a very flexible position for Black. 
+
+
+\restoregame{CaroKann_01}
+A bit easier for Black to play is a slight variation of the Advanced Variation: \mainline{3.e5 c5}. 
+
+%%%%%%%%%
+%Also advanced variation: a bit easier for black: 1.e4 c6 2.d4 d5 3.e5 c5, doesn't matter if White takes pawn with 4.dxc5 or defends with 4.c3, Black's knights mission it to apply pressure to the center with 4..Nc6. Often White will defend their e pawn with 5.Nf3, which Black will respond to with 5..Bg4, pinning the knight. (this pin can also happen later in the game, as soon as knight is out, it will be pinned, and thus not being able to defend to pawn any longer). If white continues with 6.Bb5, black can just wait as trading knight against bishop is fine for Black since it will makes Black's center pawn structure even stronger after bxc6. If Black eventually moves ...e6, it opens the line for the dark-squared bishop, attacking White's pawn at c5. If White defends the c5 pawn with Be3, Black can develop their knight in two moves ...Ke7 and then ...Kf5 to attack the bishop
+%%%%%%%%%
+
+\newgame
+In the \textit{Two Knights Variation}, White does not immediately take control of the center with their pawns, but instead plays \mainline{1.e4 c6 2.Nc3 d5 3.Nf3}, developing their knights early.
+
+\chessboard
+
+Black can now decide to continue development with \bmove{Nf6}, take White's central pawn with \bmove{dxe4}, or play along the mainline of this variation with \mainline{3...Bg4} following, again, the main idea of the Caro-Kann for Black to bring out the light-squared bishop as early as possible. The game usually continues with \mainline{4.h3 Bxf3 5.Qxf3 e6}, resulting in a very solid center for Black with the pawn-triangle whereas White still has their two bishops and also a flexible d-pawn.
+
+\chessboard
+
+Caro Kann is considered a solid and a reliable chess opening for Black with its sound position which is without major weaknesses, thus almost forcing White to do something active and this early, failing which Black has opportunity to develop and gain a fine positional game. It is not a surprise to find the Caro Kann chess opening being often played by grandmasters.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Reti %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Réti Opening}\label{sec:opening_reti}
+\todo{Check content}
+\newgame
+% chessable: https://www.chessable.com/blog/the-reti-opening-how-to-play-as-white-and-black/
+
+Named after the Czechoslovakian Richard Réti, the \textit{Réti Opening} is a hypermodern opening, meaning that White does not aim on occupying the center directly with their pawns and thus not commit themselves to a specific pawn structure. Instead, White seeks to control the central squares from the flanks. The Réti Opening goes as \mainline{1.Nf3 d5 2.c4}, where originally the move \variation{1.Nf3} alone was referred to as the Réti Opening (nowadays this single move is known as the \textit{Zukertort Opening} after the British-German Johannes Zukertort).
+\storegame{Reti_01}
+
+\chessboard 
+
+While being very flexible, White's main idea is to fianchetto the king-side bishop to maintain pressure on the center and castling king-side. Black has three main responses, protecting the d-pawn with \bmove{e6} or \bmove{c6}, taking White's pawn with \bmove{dxc4}, or advance the d-pawn \bmove{d4}. 
+
+If Black decides to defend the d-pawn with \mainline{2...e6}, this blocks their light-square bishop but can result in a stable pawn-structure in the center. 
+
+\chessboard
+
+If White decides to take the d-pawn, Black can directly take back, \mainline{3.cxd5 exd5}, thus keeping a pawn in the center. The resulting pawn structure is unbalanced which Black would probably try to exploit somehow.
+
+\chessboard
+
+\restoregame{Reti_01}
+\hidemoves{2...e6}
+Instead of taking the pawn, White can advance a pawn to the center, \mainline{3.d4}, controlling the e5 and the c5 squares. Black can now play \mainline{3...c6}, achieving a solid pawn structure in the center.
+
+\chessboard
+
+\restoregame{Reti_01}
+Black can alternatively defend the pawn with \mainline{2...c6}, which is the most common move and has the advantage that their light-squared bishop is not blocked. If the game continues with exchanging pawns at the d5-square, \mainline{3.cxd5 cxd5}, the resulting pawn structure is symmetric in this case.
+
+\chessboard
+
+Instead of taking the pawn, White could fianchetto their light-squared bishop, (\variation{3.g3 Nf6 4.Bg2}). This would put the bishop on the h1-a8 diagonal and thus make it very powerful. Another response by White is (\variation{3.e3}), controlling the d4-square and thus blocking Black's pawn to advance to this field, and also defending the pawn at c4.
+
+\restoregame{Reti_01}
+One main response of Black to the Réti Opening is to take the c-pawn, \mainline{2...dxc4}, which seems to be an obvious option. Black has the disadvantage of being slightly undeveloped in this situation and White will often manage to recapture the pawn soon.
+
+\chessboard
+
+\restoregame{Reti_01}
+Advancing 
+The move 2...d4 is quite popular, partly because it avoids all kinds of transpositions to the Queen’s Gambit, since White will not be able to go d4 anymore.
+Black gets some space in the centre, and White will try to challenge the advanced d4-pawn. 
+
+
+
+
+
+
+TL;DR - The Réti Opening 
+* The Réti Opening is one of the most versatile and flexible chess openings out there. Played by intermediate players and up to the highest level, this opening sets up a strategic and serious fight of a chess game. 
+* It is a hypermodern, flank opening. By holding back their central pawns back from the fire early on, White gains the ability to reel Black’s pawns into the center, before undermining and attacking them. Or, in a display of flexibility, they may decide to launch them forward and transpose to another opening.
+* In the classical mainline, Black has three main responses, each of which requires a distinct approach from both players. Check below to find out what to do in each case (and a couple of traps to know).
+
+
+
+
+
+Why Play The Réti Opening?
+* White wants to avoid creating any permanent weaknesses early.
+* Every center pawn advanced is a weakness that Black can attack from long range.
+* Therefore, White should hold off moving center pawns and rather, attack from both flanks with his pieces.
+* If White plays 1.e4 or 1.d4 first, these pawn moves are permanent and Black can focus on attacking permanent weaknesses on the flanks.
+* Therefore, by developing the Knight first, and then the bishop and castling, White doesn’t create any weaknesses on his side.
+* During this time, Black typically tries to control the center with the d5 pawn. This pawn, can then later in the game, be attacked from long range. 
+
+%%%
+This Opening is known as one of the safest openings in chess for white because a bishop and a rook guard the white king.
+
+Reti is a completely positional opening. Therefore, you have to make slow plans and gain a positional advantage—a reason why this Opening is not suitable in blitz games. Also, Reti does not require a lot of opening preparation. The main reason behind this is White has only one or two plans. That’s why white don’t have to bother about heavy preparation.
+
+%%%
+
+solid, well-respected, and potent opening, by players at the very highest levels, Réti himself to shock the chess world and end Capablanca’s 8-year undefeated streak in 1924
+% https://www.chessgames.com/perl/chessgame?gid=1102101
+usually leads to long-term positional battles in which each player will try to prove the worth of their central approach, and is an excellent opening for strategically-minded players who prefer a positional squeeze to a tactical free-for-all (although it can get wild sometimes). 
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Fried Liver Attack %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% from Levi's Slowrun: https://www.youtube.com/watch?v=Gy1GOYMF-8c&list=PLBRObSmbZluRJGL313hww8eipZg2NIOKa&index=3
+\section{Fried Liver Attack (C57)}\label{sec:fried_liver_attack}
+\todo{Check content}
+\newgame
+%(from wikipedia https://en.wikipedia.org/wiki/Two_Knights_Defense,_Fried_Liver_Attack )
+The \emph{fried liver attack} is a very aggressive opening from White where one of the minor white pieces will be sacrificed very early in the game. It is known since many centuries, the earliest recorded game dates back to 1610~\cite{fried_liver.1610}. Sometime, it is also called the \emph{Fegatello Attack} (named after an Italian idiom meaning "dead as a piece of liver"). The opening is a variation of the Two Knights Defence in which White sacrifices a knight for an attack on Black's king forcing him to the middle of the board where he will be under continuous attack through the rest of the game. It is very dangerous against experienced opponents but can lead to quick winnings against a weaker player.
+
+The opening begins with the moves 
+\mainline{1.e4 e5 2.Nf3 Nc6 3.Bc4} which is the Italian Game.
+
+\showboard
+
+\mainline{3...Nf6} leads to the Two Knights Defence. If Black would have played \variation{3...Bc5}, the Fried Liver Attack does no longer work and the \emph{Evan's Gambit} is recommended for White instead. \mainline{4.Ng5} is an offensive line played by White putting a lot of pressure on the f2 square.
+
+\showboard
+
+\storegame{fried_liver_attack_01}
+\mainline{4...d5 5.exd5 Nxd5} 
+Black's response is risky here, a possible variation is \variation{5...Na5}. This is the most popular response nowadays, and a good answer from White is \variation{5...Na5 6.Bb5+ c6 7.dxc6 bxc6 8.Ba4}. Other variations include the \emph{Ulvestad Variation} with \variation{5...b5}, and \variation{5...Nd4} which can lead to some interesting lines. 
+
+White can now get an advantage with \wmove{d4}, the \emph{Lolli Attack}, discussed in Sec.~\ref{s.lolli_attack}. However, the Fried Liver Attack involves a more spectacular move with \mainline{6.Nxf7?!}. Usually, Black takes the knight with \mainline{6...Kxf7} which might not be the best move.
+
+\showboard
+
+White has now successfully allured the black king into open ground and makes immediately use of this weakness with \mainline{7.Qf3+}. Black now has a few possibilities to escape that chess, where \mainline{7...Ke6} is considered as the best option. 
+A possible continuation is 
+\mainline{8.Nc3 Ncb4 9.Qe4! c6 10.a3 Na6 11.d4!}
+
+\showboard
+
+Although, the Fried Liver Attack seems to be fun for White, it can be fun for Black, too: the \emph{Traxler Counterattack}, sometimes called the \emph{Wilkes-Barre Variation}, is a very strong response from Black and can lead to quite the opposite result of what White was intending to do: the white king is now in great danger to be chased around the board. 
+
+\restoregame{fried_liver_attack_01}
+It starts with \mainline{4...Bc5}. Black totally ignores the threat on f7 and starts a strong attack on White's kingside. If White continues with his plan and captures the pawn with \mainline{5.Nxf7?!}, forking the queen and the rook, Black keeps being ignorant and plays \mainline{5...Bxf2}, sacrificing its bishop. 
+
+\showboard
+
+Although Black is down in material early, it will be hard for White to develop any of his pieces. Black, in contrast, can easily bring his pieces into action. Note that the best answer for White here is probably not to take the bishop, although it might be tempting, but play \mainline{6.Kf1} instead. Taking the bishop would result in (\variation{6.Kxf2 Nxe2+ 7.Kg1 Qh4}). 
+
+\restoregame{fried_liver_attack_01}
+\hidemoves{4...Bc5}
+Somewhat crushing Black's attempt to play the Traxler is \mainline{5.Bf7+!}. The best line to continue is now \mainline{5...Ke7 6.Bb3! Rf8 7.d3} which gives White good advantages.
+
+\showboard
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% King's Indian Attack %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{King's Indian Attack}
+\todo{Check content}
+% source: https://www.chessable.com/blog/the-kings-indian-attack/
+%         https://chessfox.com/how-to-play-the-kings-indian-attack/
+The \textit{King's Indian Attack} (or \textit{KIA} as it is often abbreviated) is not an opening requiring a strict move order but rather an \textit{opening system} where various moves lead to a specific position. It was often played by Bobby Fisher and is quite popular still today as it is reasonable easy to learn, not requiring to memorize numerous variations. 
+
+\newchessgame
+A typical opening leading to the KIA is given by the following moves:
+\mainline{1.Nf3 Nf6 2.g3 d5 3.Bg2 c6 4.d3 Bg4 5.O-O Nbd7 6.Nbd2}
+\par
+\chessboard
+
+Note that Black could have castled in the fourth move already. As can be seen, having a king-side fianchetto, knights on the f3- and d2-square, pawns on the d3- and later also on the e4-square are the characteristics of the KIA. White's general idea is to first develop their pieces and bring the king into safety, i.e.\ castling, then start to think about attacking Black. Often White will focus to attack on the king-side, while Black on the other hand will try to break through via the queen-side. As a continuation, White will now try to play \wmove{e4}, followed eventually by putting the pawn onto the e5-square, moving the knight from the d2-square to the h2-square to attack Black's light-squared bishop on g4, and move White's own bishop to f4.
+
+To enforce being able to play the KIA, the opening move \wmove{e4} is more recommended, as the opening move \wmove{Nf3} allows more responses by Black, e.g.\ a Reversed London System or a King's Indian Defense, which do not favor playing the KIA~\cite{chessable.2022}. It should be notes though that playing \wmove{Nf3} as early as possible has a few advantages, as it directly attacks the e5-square and prepares and early king-side castling.
+
+White should be aware of its powerful light-squared bishop in this opening, protecting on one hand side White's king-side and on the other hand also controlling the long h1-a8-diagonal. Therefore, White should avoid exchanging this bishop. White's dark-squared bishop needs to be patient before it can enter the game. Often it is developed to the f4-square, \bmove{Bf4}, after White managed to put a pawn onto the e5-square. Alternatively, if getting a pawn onto e5 is not possible, \bmove{b3} could prepare \bmove{Bc2}. A thorough discussion about the role of the remaining pieces in the KIA can be found, for example, in Ref.~\cite{chessfox.2023}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Lolli Attack %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Lolli Attack}\label{s.lolli_attack}
+\todo{Check content, move closer to Fried Liver Attack}
+\newgame
+The Lolli Attack is a gambit. In a gambit you usually give up a pawn to get a fast attack. The Lolli Attack is similar to the Fried Liver Attack, but generally known to be even better. The following analysis is mostly from Ref.~\cite{chesskid.com}. ECO C57
+
+\mainline{1.e4 e5 2.Bc4} Starting early to aim on the weakest black square f7. Alternatively, \variation{2.Nf3 Nc6 3.Bc4} would also be possible.
+
+\showboard
+
+\mainline{2...Nf6 3.Nf3} Getting ready to castle totally ignoring the thread on the pawn at e4. Never mind about losing it, if black takes it, we have the \emph{Morphy Gambit}, see Sec.~\ref{s.morphy_gambit}. \mainline{3...Nc6} This is the \emph{two knights defence} (C55).
+
+\showboard
+
+\mainline{4.Ng5} Instead of castling we take our chance and attack our favourite black square in this game: f7.
+
+%\showboard
+
+\storegame{Lolli_01}
+\mainline{4...d5} Probably the best move for black here as it must protect the pawn at f7.
+
+\showboard
+
+\variation{4...Bc5} is the \emph{Traxler counter attack} which is somewhat problematic because the pawn at f7 is lost: 
+\newgame
+\hidemoves{1.e4 e5 2.Bc4 Nf6 3.Nf3 Nc6 4. Ng5}
+\mainline{4...Bc5 5.Bxf7+ Ke7 6.Bb3} When you steal a pawn, get out of town fast. 
+
+\showboard
+
+\mainline{6...Rf8} \variation{6...d5 7.exd5 Nd4 8.O-O} is very promising for white as it will soon get the black knight at d4 with \wmove{c3}. \mainline{7.O-O d6 8.Nc3}
+
+\showboard
+
+\newgame
+\restoregame{Lolli_01}
+Another option is \mainline{4...Nxe4} which is rare and demands white's attention. \mainline{5.Bxf7+ Ke7 6.d3} kicks out the knight but also protects your won knight at g5. Black can't capture because white would recapture the knight on g5 with check, winning the queen on d8.
+
+\showboard
+
+\mainline{6...Nf6 7.Bb3 d5 8.O-O} is a very nice position for white.
+
+\showboard
+
+\newgame
+\restoregame{Lolli_01}
+\hidemoves{4...d5}
+Back to the mainline. \mainline{5.exd5 Nxd5} This is the mistake we were aiming for, it shows you that black does not know this opening. \variation{5...Na5} is the main move, which will be covered later.
+
+\showboard
+
+\mainline{6.d4} This is the Lolli Attack, more known might be the \emph{Fried Liver Attack}, where you immediately make a sacrifice at f7. This is, however, problematic for white if black knows how to defend properly. 
+
+\showboard
+
+\storegame{Lolli_02}
+\mainline{6...exd4} is the most common reply but not the best.
+\newgame
+\restoregame{Lolli_02}
+\mainline{6...Bb4+} is the best: If white blocks with the pawn, c3 can no longer be used by a knight as in our main line. 
+\mainline{7.c3 Be7 8.Nxf7} is risky but fun, in the spirit of the Lolli Attack.
+
+\showboard
+
+\mainline{8...Kxf7 9.Qf3+ Ke6 10.O-O} Now the rook can support the attack with \wmove{Re1}. 
+
+\showboard
+
+\mainline{10...Na5 11.Bd3 Qf8?!}
+
+\showboard
+
+\variation{11... Bf6 12.dxe5 Bxe5 13.c4 Ne7 14.Rd1 Nac6 15.Bf5+ Nxf5 16.Rxd8 Rxd8 17.Nc3} keeps white's attack going.
+
+\mainline{12.Qe4 Bd6 13.dxe5 Be7 14.b4 Bxb4 15.cxb4 Qxb4 16.Qf5+ Ke7 17.Bg5+ Ke8 18.e6 Nf6 19.Bd2! Qd6 20.Bxa5 Bxe6 21.Qb5+ c6 22.Qxb7} Black resigned in Daniel Langier vs. Raaul Acosta, 1993.
+
+\showboard
+
+\newgame
+\restoregame{Lolli_02}
+Another possible answer to the Lolli attack is \mainline{6... Be7 7.Nxf7! Kxf7 8.Qf3+ Ke6 9.Nc3 Nxd4 10.Bxd5+ Kd6 11. Qd3} Black is now in deep trouble.
+
+\showboard
+
+\newgame
+\restoregame{Lolli_02}
+\mainline{6... Nxd4 7.c3 Ne6 8.Qxd5} White keeps the material advantage.
+
+\showboard
+
+\newgame
+\restoregame{Lolli_02}
+\mainline{6... Be6 7.Nxe6 fxe6 8.dxe5 Nxe5 9.Qh5+ Ng6 10.O-O Bc5 11.Bd3 O-O 12.Nc3 Nxc3 13.Qxc5} White's bishops bring a serious advantage and Black's pawn at e6 is very weak.
+
+\showboard
+
+\newgame
+\restoregame{Lolli_02}
+\mainline{6... f6 7.dxe5! fxg5 8.Bxd5 Nxe5 9.O-O} White obviously has the better game, as the king is castled while Black will struggle to defend. 
+
+\showboard
+
+\newgame
+\restoregame{Lolli_02}
+Back to the mainline with \mainline{6...exd4}.
+\mainline{7.O-O} Goal \# 2 accomplished! 
+\mainline{7...Be7} Black wants to kick out the knight and get castled. Very logical! 
+
+\showboard
+
+\variation{7... Be6} defends f7, but it gets blown up! \variation{7... Be6 8.Re1 Qd7 9.Nxf7!! Kxf7 10.Qf3+ Kg8 11.Rxe6! Ncb4 12.Re5 c6 13.a3 Nxc2? 14. Rxd5}
+\variation{7... h6} loses in similar fashion. \variation{7... h6 8.Nxf7 Kxf7 9.Qf3+ Qf6 10.Bxd5+ Be6 11.Bxe6+ Kxe6 12.Re1+ Kf7 13.Qd5+} Black resigned, Eagle vs. Haakonstad, 1985 13... Kg6 14. Re6 wins the queen.
+
+\mainline{8. Nxf7} Sacrificing the knight now leads to a winning the game by force. 
+\mainline{8... Kxf7 9.Qf3+} Forking the king and knight. 
+
+\showboard
+
+\mainline{9... Ke6} Otherwise White gets the knight at d5 and Black's game is a total mess. 
+\mainline{10. Nc3} Another knight sacrifice. Black must accept as the pressure at d5 is too great. 
+\mainline{10... dxc3}
+
+\showboard
+
+\variation{10... Ncb4 11.Re1+ Kd6 12.Nxd5 Nxc2 13.Qg3+ Kc6 14.Nxe7+ Kc5 15.Re5+ Kxc4 16.Qb3#}
+
+\mainline{11. Re1+ Ne5} The knight forks the bishop and queen but cannot capture because it is pinned. 
+
+\showboard
+
+\mainline{12. Bf4} Double pins! Opening rules \# 3 and \#4 completed! 
+\mainline{12... Bf6 13.Bxe5} Remove the defender! 
+
+\showboard
+
+\mainline{13... Bxe5 14.Rxe5+} Remove the defender! 
+\mainline{14... Kxe5 15.Re1+} This is what you get when you connect the rooks! One can replace another. 
+
+\showboard
+
+\mainline{15... Kd4} \variation{15... Kd6 16. Qxd5#}
+\mainline{16. Bxd5} Remove the defender! 
+\mainline{16... Qxd5 17.Qxc3#}
+
+\showboard
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Morphy Gamit %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Morphy Gambit}\label{s.morphy_gambit}
+\todo{Check content}
+Copied from Ref.~\cite{chesskid.com}. 
+
+One of your main weapons should be the gambit favored by Paul Morphy.
+
+The first moves are 1.e4 e5 2.Bc4 Nf6 3.Nf3!? (Or 1.e4 e5 2.Nf3 Nf6 3.Bc4!?). Then if Black grabs the e-pawn, White brings out the other knight to c3. The idea is to sacrifice a pawn for rapid development and a good attack. 
+
+We will look at two games. In the first game, the gambit is accepted, in the second game, the gambit is declined.
+
+Accepted: Morphy vs. Barnes. London (England) | 1858 | ECO: C55 | 1-0
+
+\newgame
+\mainline{1.e4 e5 2.Bc4 Nf6 3.Nf3 Nxe4 4.Nc3 Nxc3 5.dxc3 f6} This is the recommended move, but it is a major weakness and Black won't be able to castle kingside. 
+
+\showboard
+
+\mainline{6.O-O Nc6 7.Nh4} Setting up the major threat of Qh5+, since if the pawn blocks at g6, the knight can take it as the Ph7 is pinned to the rook. 
+
+\showboard
+
+\mainline{7...Qe7 8.Nf5 Qc5 9.Bb3 d5 10.Be3} White develops the bishop with an attacking move.
+
+\showboard
+
+\mainline{10... Qa5 11. Nh4} Also possible is \variation{11.Ng3 Be6 12.Qh5+ Bf7 13.Qg4?}.
+
+\showboard
+
+\mainline{11...Be6 12.Qh5+ g6?} \variation{12...Bf7} is much better, \variation{12...Bf7 13.Qg4 Ne7} gives Black the better game, according to Jangava. \wmove{14 Rad1} followed by f4 seems the best way for White to play.
+
+\showboard
+
+\mainline{13. Nxg6!} The h-pawn is pinned. 
+\mainline{13...Bf7 14.Qh4!}
+
+\showboard
+
+\mainline{14...Bxg6 15.Qxf6} White has only one pawn for the knight, but the Black king has a lot to worry about. 
+
+\showboard
+
+\mainline{15... Rg8 16.Rad1 Be7 17.Qe6 Bf7 18.Qh3} The queen is chased away. There isn't much of an attack, but Black has to find a way to keep the king safe. 
+
+\showboard
+
+\mainline{18... Nd8 19.f4} Morphy has to open some lines to get to Black's king. 
+
+\showboard
+
+\mainline{19...e4 20.Rxd5} The rook is sacrificed just to deflect the bishop. 
+
+\showboard
+
+\mainline{20... Bxd5 21.Qh5+}
+\storegame{Morphy_01}
+\mainline{21...Kf8}
+
+\showboard
+
+\newgame
+\restoregame{Morphy_01}
+The variation \mainline{21...Rg6 22.Bxd5 Bc5} would have at least have gotten rid of White's other bishop. However, the bishop at c5 is really pinned, since there is the possiblity of Bf7+. So White can ignore the attack on the bishop, as long as it doesn't fall with check. \mainline{23.Kh1! Qa6 24.Re1 Bxe3} The bishop is safe, because of the weakness of White's back rank. \mainline{25.f5} would keep chances about even.
+
+\showboard
+
+\newgame
+\restoregame{Morphy_01}
+\hidemoves{21...Kf8}
+
+Back to the game: \mainline{22.Bxd5 Rg7 23.b4} Morphy sees that this bishop at d5 is now pinned, so he chases away the enemy queen. 
+
+\showboard
+
+\mainline{23... Qa6 24.f5 Nf7 25.f6!}
+
+\showboard
+ 
+\mainline{25...Bxf6 26.b5 Qd6} Forced, to protect the bishop at f6. 
+
+\showboard
+
+\mainline{27.Bxf7} Black can't afford to recapture, so Morphy has regained most of his material and still has a ferocious attack. 
+\mainline{27...b6} The variation \variation{27...Rxf7 28.Bc5} picks off the queen. 
+\mainline{28.Bh6 Ke7 29.Bxg7 Bxg7} Morphy is now a pawn up, but more important is his attack on the light squares. 
+
+\showboard
+
+\mainline{30.Bb3 Rf8 31.Rf7+ Rxf7 32.Qxf7+ Kd8 33.Qxg7 Qd1+ 34.Kf2 Qd2+ 35.Kg3 e3 36.Qf6+ Kc8 37.Be6+ Kb7 38.Qf3+} And white wins... 
+
+\showboard
+
+
+% new game: declined Morphy gambit
+Declined gambit: Morphy vs. Lichtenhein, American Chess Congress | New York (USA) | 23 Oct 1857 | ECO: C42 | 1-0
+\newgame
+
+\mainline{1.e4 e5 2.Bc4 Nf6 3.Nf3 Nxe4 4.Nc3 d5} Black returns the pawn to relieve the pressure, but White retains some advantage. 
+
+\showboard
+
+\mainline{5.Bxd5} \variation{5.Nxd5 c6 6.Ne3} is suggested by Maroczy.
+\mainline{5...Nf6!} \variation{5...Nxc3 6.dxc3 c6 7.Bxf7+} is an opening trap. Black loses the queen. 
+
+\mainline{6.Bb3 Bd6} This is one way to defend the pawn. 
+
+\showboard
+
+\mainline{7.d3 O-O} \variation{7...Bg4 8.O-O Nc6} would have been a reasonable way to play.
+\mainline{8.h3} To keep a bishop off g4. 
+
+\showboard
+
+\mainline{8...h6 9.Be3 Nc6} 
+
+\showboard
+
+\variation{9...Qe7} see Pg Modq vs. Siti Zulaikha, 2003, \variation{9... Nbd7} see Wong Zi Jing vs. Siti Zulaikha, 2003.
+\mainline{10.Qd2} Morphy wants to castle queenside and attack with pawns on the kingside. 
+\mainline{10... Na5 11. g4} Morphy is going to be castling on the queenside, so users a pawn storm to open up the kingside. 
+
+\showboard
+
+\mainline{11...Nxb3 12.axb3} It is best to capture toward the center of the board, most of the time. 
+\mainline{12...Bd7 13.Rg1} Aiming a rook at the king. The g-pawn can be gotten out of the way by advancing. 
+
+\showboard
+
+\mainline{13...Nh7} Black decides to take up the fight over the g5-square. But the knight never leaves this pathetic post! 
+\mainline{14.Ne4} Morphy wins that duel by adding another knight to coverage of g5. 
+\mainline{14...Kh8}
+
+\showboard
+
+\variation{14...Bc6} would have put the bishop in position to deal with one of the knights.
+
+\mainline{15.g5! h5}
+
+\showboard
+
+\variation{15...hxg5? 16.Nfxg5 Nxg5 17.Rxg5} with a nice attacking position.
+\variation{15...Nxg5 16.Nfxg5 hxg5 17.Rxg5} is identical.
+
+\mainline{16.Nh4 g6} Black erects a wall, but Morphy is well-known for demolishing such barriers. 
+\mainline{17.Qe2} The subtle point of this move is to set up Nf5 when, if the pawn captures, the queen can capture the pawn at h5. 
+
+\showboard
+
+\mainline{17...Bc6} The bishop should have stayed to guard f5, but Black assumed the g-pawn could handle those duties. 
+\mainline{18.f4} This pawn will get to f5 and demolish g6 if allowed to stay on the board. 
+\mainline{18...exf4} Black should have taken the knight at e4 first. 
+
+\showboard
+
+\mainline{19.Bd4+ Kg8 20.Nf5? Re8} The king needs an escape hatch! 
+
+\showboard
+
+\variation{20...gxf5? 21.Nf6+ Nxf6 22.gxf6+ Kh7 23.Qxh5#}
+\variation{20...Bxe4?? 21.Nh6#}
+
+\mainline{21.Nh6+ Kf8 22.O-O-O Bxe4} Too late! 
+
+\showboard
+
+\variation{22...Nxg5} was correct. Morphy could try \variation{22...Nxg5 23.Nxf7? Nxf7 24.Rxg6} He'd be down a bishop, but the attack is feocious and Black's king has no pawn escorts.
+
+\mainline{23.dxe4 Qe7} Getting off the diagonal of the White rook. 
+\mainline{24.e5} A strong sacrifice, with the goal of getting the rook to d7. 
+\mainline{24...Bxe5}
+
+\showboard
+
+\variation{24...Bb4? 25.Qc4 b5} would have deflected the queen, and the endgame after 26. Qc6 Qe6 27. Qxe6 Rxe6 would have been about even. Both sides have some weak pawns that could be used as targets.
+\mainline{25.Bxe5 Qxe5 26.Rd7} Not much of a queen sacrifice, since Black gets mated at f7 if the queen is captured. 
+\mainline{26...Qg7}
+
+\showboard
+
+\variation{26...Qxe2?? 27.Rxf7#}
+\variation{26...Qe6 27.Qxe6 Rxe6 28.Rxf7+ Ke8 29.Rxh7} with an extra knight for the pawn.
+
+\mainline{27.Qc4} The pressure at f7 is just too much. 
+\mainline{27...Re7 28.Rxe7 Kxe7 29.Re1+} Black resigned.
+
+\showboard
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Pirc Defence %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Pirc Defence}
+\todo{Check content}
+
+The \emph{Pirc Defence}, also known as \emph{Ufimtsev Defence} or \emph{Yugoslav Defence}, is a hypermodern opening and strong answer of Black to White's most common opening move \wmove{e4}. It is named after the Slovenian GM Vasja Pirc and is often considered to be one of the best chess openings. The corresponding opening code is B07.
+
+\newgame
+The defence starts with \mainline{1.e4 d6}. 
+
+\showboard
+
+Black plays very passively, allowing White to directly take control of the center. Black will slowly develop an attack on the center. The mainline continues with \mainline{2.d4 Nf6 3.Nc3 g6}.
+\storegame{Pirc_defence_01}
+
+\showboard
+
+White has already an impressive looking centre with its two pawns but Black will usually continue its development unimpressed with \bmove{Bg7}. 
+
+In the \emph{Pribyl System} (or \emph{Czech Defence}), Black plays \variation{3...c6} instead. The move \bmove{g6} can be played later. Black has, however, also the alternative moves \bmove{Qa5} and \bmove{e5} to challenge White's centre and prepare \bmove{b5} to further expand on the queenside.
+
+A strong answer by White to the Pirc Defence is the \emph{Austrian Attack} which continues with \mainline{4.f4 Bg7 5.Nf3}. White has gained a quite powerful centre with his pawns.
+
+\showboard
+
+\restoregame{Pirc_defence_01}
+Another possible continuation of the Pirc Defence is the \emph{Classical} or \emph{Two Knights Strategay}: \mainline{4.Nf3 Bg7 5.Be2 O-O 6.O-O}. White has developed both knights and the kingside bishop, Black's his kingside bishop and knight. Both players have castled kingside. Common responses of Black are \bmove{Bg4}, \bmove{c6}, \bmove{Nc6}.
+
+\showboard
+
+\newgame
+An often played deviation by Black to the Pirc Defence is \mainline{1.e4 d6 2.d4 Nf6 3.Nc3 e5} which differs only in the last move (\bmove{e5} instead of \bmove{g6}).
+
+\showboard
+
+The mainline then continues with \mainline{4.dxe5 dxe5 5.Qxd8+ Kxd8 6.Bc4 Be6 7.Bxe6 fxe6}.
+
+\showboard
+
+\newgame
+\hidemoves{1.e4 d6 2.d4 Nf6 3.Nc3 e5}
+Instead of aiming for the exchange, White can also play \mainline{4.Nf3} transforming to the \emph{Philidor Defence}.
+
+\showboard
+
+
+
+
+
+\newgame
+In a slightly different defence, the \emph{Modern Defence} (or \emph{Robatsch Defence}), Black delays the knight's development to \bmove{Nf6}. This line goes as \mainline{1.e4 g6 2.d4 Bg7} and is to be distinguished from the Pirc Defence.
+
+\showboard
+
+There are two main variations from here on, the first one goes as \mainline{3.Nc3 d6 4.f4 c6 5.Nf3 Bg4}. 
+
+\showboard
+
+\newgame
+\hidemoves{1.e4 g6 2.d4 Bg7}
+The second one goes as \mainline{3.c4 d6 4.Nc3 Nc6 5.Be3 e5 6.d5 Ne7}
+
+\showboard
+
+\newgame
+In addition to the Austrian Attack mentioned above, a somewhat strong answer by White is the \emph{150 Attack}. It is usually recommended against players having an ELO rating below 1800. It involves the moves \wmove{Be3} and \wmove{Qd2} and is commonly used against the \emph{King's Indian Defence} and the \emph{Dragon Sicilian}. The 150 Attack starts with \mainline{1.e4 d6 2.d4 Nf6 3.Nc3 g6 4.Be3 c6 5.Qd2}.
+
+\showboard
+
+White develops its pieces, protects the centre and castles queenside. After playing \wmove{Bh6}, White then takes Black's bishop on g7, usually plays \wmove{h4}, \wmove{h5}, \wmove{hxg6}, thus opening the h-file for the rook. With \wmove{Qh6}, White threatens mate. In this scenario, Black is usually attacking White's king with moves like \bmove{e5}, \bmove{c5} or \bmove{c6}, \bmove{b5}, \bmove{b4}. 
+
+\newgame
+A third, strong answer to the Pirc Defence, is a deviation from the Austrian Attack. It goes \mainline{1.e4 d6 2.d4 Nf6 3.Nc3 g6 4.f4 Bg7 5.e5!?}. 
+
+\showboard
+
+A recommended continuation is then \mainline{5...dxe5 6.dxe5 Qxd1+ 7.Kxd1 Ng4 8.Ke1 c6 9.h3 Nh6 10.g4!}. Black has now an awkward knight on h6 and the position is quite Pirc-unlike.
+
+\showboard
+
+In summary, the Pirc Defence is an impressive and strong opening for Black where Black focusses on defending the centre while at the same time developing the kingside knight and bishop very early. If Black is, however, not careful, chances are that White puts a lot of pressure on Black's kingside thus hindering the development of the corresponding pieces. If you want to play the Pirc Defence, you better know your theory! There are two good books which are often recommended to study the Pirc Defence in details~\cite{Chernin.2001,Vigus.2007}. 
+
+
+nigel davies good dvd on it.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Patzer Opening %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Patzer's Opening}
+\todo{Check content}
+\newgame
+This opening is an aggressive try of White to gain a quick mate. It is usually only used against weak Black players who might not be familiar with this opening because Black can gain some development advantage from it if played correctly.
+
+\mainline{1.e4 e5 2.Qh5} With its aggressive move, White breaks one of the opening rules saying that you should not move your queen too early. White's idea is to bring its bishop to c4 and threaten mate at f7 with the queen.
+
+\showboard
+
+An immediate threat by White is of course taking the pawn on e5 and Black must address both threats: \mainline{2...Nc6 3.Bc4}. White is now threatening the mate at f7 and Black has a number of possible answers, \bmove{Nh6} to defend the f7 square, \bmove{g6} to directly attack the queen. Note that \bmove{d5} is not working as White will then simply take the pawn with the bishop. When continuing with the more aggressive line by Black \mainline{3...g6}, White is forced to move his queen.
+
+\showboard
+
+Usually, White will continue to threaten the mate at f7 with \mainline{4.Qf3 Nf6}. White has not only blocked one of the best squares for his kingside knight, Black also has an advantage in development and White's attack is now running out of steam.
+
+\showboard
+
+
+
+
+\section{Common opening mistakes}
+\todo{Check content}
+\begin{itemize}
+	\item moving only pawns
+	\item moving the queen too early
+	\item blocking the bishops with pawns
+	\item knight at boundary
+	\item moving a piece more than once
+	\item senseless chess
+\end{itemize}
+n der Italienischen Partie wird oft der Bauer f7 angegriffen, obwohl die Abwehr mit Tempogewinn leicht möglich ist: 1.e4 e5 2.Sf3 Sc6 3.Lc4 Lc5 Alles wie schon bekannt 4.0-0 Sf6 5.Sg5? Nutzlos! 5… 0-0! Die Gefahr ist abgewehrt. Das Schlagen des Bauern f7 durch den Läufer oder Springer wäre nun ungünstig für Weiß. 6.c3? Der Bauer e4 müßte gedeckt werden. 6…. h6! Jetzt muß der Springer wieder zurück: 7.Sf3 Schwarz gewinnt den Bauern e4 und kann das Zentrum besetzen.
+
+Weitere schwache Züge: 1.e4 e5 2.Sf3 Sc6 3.Ld3?? Der Läufer blockiert die weiße Entwicklung total!
+
+1.e4 e6 2.d4 Df6? 3.e5 Df5?? 4.Ld3! Die Dame geht verloren. Und das schon im 4. Zug! Diese Stellung mußt du dir auf dem Brett gut ansehen!
+
+1.e4 e5 2.Sf3 Sf6 3.Sxe5 Sxe4? Schwarz müßte erst d6 spielen und dann im nächsten Zug Sxe4. Jetzt aber verliert er die Dame durch ein "Abzugsschach": 4.De2! Sf6?? 5.Sc6+! Aus ist der Traum!
+
+Das Schäfermatt: Ein häufig gespielter Eröffnungsfehler führt zum "Schäfermatt": 1.e4 e5 2.Lc4 Lc5 Bis hierher ist alles korrekt. Nun täuscht Weiß mit 3.Dh5 als Ziel einen Angriff auf den Bauern e5 vor. Schwarz stolpert in die Falle: 3.… d6?? Er deckt den Bauern e5. 4.Dxf7\#
+
+
+%%%%%%%%%%%%%%%%% mid game stuff %%%%%%%%%%%%%%%%%%%%%
+% https://www.youtube.com/watch?v=uokObdo2x1I
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% NEW CHAPTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Famous Games}
+\todo{Check content}
+Afro Ambanelli vs Robert J Frith\\
+cr (1981)  ·  Spanish Game: Berlin Defense. Rio Gambit Accepted (C67)  ·  1-0 
+
+\newgame
+%\noindent
+\mainline{1. e4 e5 2. Nf3 Nc6 3. Bb5}
+This seems to be the standard Spanish Game, also known as Ruy-Lopez.
+
+\showboard
+
+\mainline{3... Nf6 4.O-O Nxe4 5. d4 exd4 6. Re1
+d5 7. Qxd4 a6 8. Bxc6+ bxc6 9. Ng5 Qf6 10. Nxe4 Qxd4 11. Nf6+
+1-0} 
+
+\showboard
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% The Immortal Game %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Immortal Game}
+\todo{Check content}
+From wikipedia:% https://en.wikipedia.org/wiki/Immortal_Game
+\newgame
+
+The Immortal Game was a chess game played by Adolf Anderssen and Lionel Kieseritzky on 21 June 1851 in London, during a break of the first international tournament. The bold sacrifices made by Anderssen to secure victory have made it one of the most famous chess games of all time. Anderssen gave up both rooks and a bishop, then his queen, checkmating his opponent with his three remaining minor pieces. The game has been called an achievement "perhaps unparalleled in chess literature".[1]
+
+Adolf Anderssen was one of the strongest players of his time, and many consider him to have been the world's strongest player after his victory in the London 1851 chess tournament. Lionel Kieseritzky lived in France much of his life, where he gave chess lessons, and played games for five francs an hour at the Café de la Régence in Paris. Kieseritzky was well known for being able to beat lesser players despite handicapping himself—for example, by playing without his queen.
+
+Played between the two great players at the Simpson's-in-the-Strand Divan in London, the Immortal Game was an informal one, played during a break in a formal tournament. Kieseritzky was very impressed when the game was over, and telegraphed the moves of the game to his Parisian chess club. The French chess magazine La Régence published the game in July 1851. This game was nicknamed "The Immortal Game" in 1855 by the Austrian Ernst Falkbeer.
+
+This game is acclaimed as an excellent demonstration of the romantic style of chess play in the 19th century, where rapid development and attack were considered the most effective way to win, where many gambits and counter-gambits were offered (and not accepting them would be considered slightly ungentlemanly), and where material was often held in contempt. These games, with their rapid attacks and counter-attacks, are often entertaining to review, even if some of the moves would no longer be considered the best by today's standards.
+
+In this game, Anderssen wins despite sacrificing a bishop (on move 11), both rooks (starting on move 18), and the queen (on move 22) to produce checkmate against Kieseritzky who only lost three pawns. He offered both rooks to show that two active pieces are worth a dozen inactive pieces. Anderssen later demonstrated the same kind of approach in the Evergreen Game.
+
+Some published versions of the game have errors, as described in the annotations.
+
+
+White: Adolf Anderssen[3]   Black: Lionel Kieseritzky   Opening: Bishop's Gambit (ECO C33)
+
+\mainline{1.e4 e5 2.f4}
+This is the King's Gambit: Anderssen offers his pawn in exchange for faster development. Although this was a common opening in the nineteenth century, it is less common today, as defensive techniques have improved since Anderssen's time.
+
+\mainline{2...exf4}
+Kieseritzky accepts the gambit; this variant is thus called the King's Gambit Accepted.
+
+\mainline{3.Bc4 Qh4+}
+The Bishop's Gambit. Black's move will force White to move his king and White will not be able to castle, but this move also places Black's queen in peril, and White can eventually attack it with gain of tempo with Ng1–f3. 
+
+\mainline{4.Kf1 b5?!}
+This is the Bryan Counter-gambit, deeply analysed by Kieseritzky, and which sometimes bears his name. It is not considered a sound move by most players today.
+
+\mainline{5.Bxb5 Nf6 6.Nf3}
+This is a common developing move, but in addition the knight attacks Black's queen, forcing Black to move it instead of developing his own side.
+
+\mainline{6...Qh6 7.d3}
+With this move, White solidifies control of the critical center of the board. German grandmaster Robert Hübner recommends \variation{7.Nc3} instead.
+
+\mainline{7...Nh5}
+This move threatens Ng3+, and protects the pawn at f4, but it also sidelines the knight to a poor position at the edge of the board, where knights are the least powerful.
+
+\mainline{8.Nh4 Qg5}
+Better was \variation{8...g6}, according to Kieseritzky.
+
+\mainline{9.Nf5 c6}
+This simultaneously unpins the queen pawn and attacks the bishop. However, some have suggested \variation{9...g6} would be better, to deal with a very troublesome knight. Notice how the players have both developed one or two pieces, then moved them again and again. 
+
+\mainline{10.g4? Nf6 11.Rg1!}
+This is an advantageous passive piece sacrifice. If Black accepts, his queen will be moved away from the action, giving White a lead in development.
+
+\mainline{11...cxb5?}
+Hübner believes this was Black's critical mistake; this gains material, but loses in development, at a point where White's strong development is able to quickly mount an offensive. Hübner recommends \variation{11...h5} instead.
+
+\mainline{12. h4!}
+White's knight at f5 protects the pawn, which attacks Black's queen.
+
+\mainline{12...Qg6 13.h5 Qg5 14.Qf3}
+White (Anderssen) now has two threats:
+\wmove{Bxf4}, trapping Black's queen (the queen having no safe place to go);
+\wmove{e5}, attacking Black's knight at f6 while simultaneously exposing an attack by White's queen on the unprotected black rook at a8.
+
+\mainline{14...Ng8}
+This deals with the threats, but undevelops Black even further—now the only black piece not on its starting square is the queen, which is about to be put on the run, while White has control over a great deal of the board.
+
+\mainline{15.Bxf4 Qf6 16.Nc3 Bc5}
+An ordinary developing move by Black, which also attacks the rook at g1.
+
+\mainline{17.Nd5}
+White responds to the attack with a counterattack. This move threatens the black queen and also Nc7+, forking the king and rook. Richard Réti recommends \variation{17.d4} followed by 18.Nd5, with advantage to White, although if \variation{17.d4 Bf8} then 18.Be5 would be a stronger move. 
+
+\mainline{17...Qxb2}
+Black gains a pawn, and threatens to gain the rook at a1 with check.
+
+\mainline{18.Bd6!}
+\storegame{immortal_game_01}
+With this move White offers to sacrifice both his rooks. Hübner comments that, from this position, there are actually many ways to win, and he believes there are at least three better moves than 18.Bd6: \variation{18.d4}, \variation{18.Be3}, or \variation{18.Re1}, which lead to strong positions or checkmate without needing to sacrifice so much material. The Chessmaster computer program annotation says "the main point [of this move] is to divert the black queen from the a1–h8 diagonal. Now Black cannot play \mainline{18...Bxd6? 19.Nxd6+ Kd8 20.Nxf7+ Ke8 21.Nd6+ Kd8 22.Qf8#}." Garry Kasparov comments that the world of chess would have lost one of its "crown jewels" if the game had continued in such an unspectacular fashion. The Bd6 move is surprising, because White is willing to give up so much material.
+
+\restoregame{immortal_game_01}
+\mainline{18...Bxg1?}
+The move leading to Black's defeat. Wilhelm Steinitz suggested in 1879 that a better move would be \variation{18...Qxa1+};[4] likely moves to follow are \variation{18...Qxa1+ 19.Ke2 Qb2 20.Kd2 Bxg1}.[5]
+
+\mainline{19.e5!}
+This sacrifices yet another white rook. More importantly, this move blocks the queen from participating in the defense of the king, and threatens mate in two: \variation{19.Nxg7+ Kd8 20.Bc7#}.
+
+\mainline{19...Qxa1+ 20.Ke2}
+At this point, Black's attack has run out of steam; Black has a queen and bishop on the back rank, but cannot effectively mount an immediate attack on White, while White can storm forward. According to Kieseritzky, he resigned at this point. Hübner notes that an article by Friedrich Amelung in the journal Baltische Schachblaetter, 1893, reported that Kiesertizky probably played 20...Na6, but Anderssen then announced the mating moves. The Oxford Companion to Chess also says that Black resigned at this point, citing an 1851 publication.[6] In any case, it is suspected that the last few moves were not actually played on the board in the original game. 
+
+\mainline{20...Na6}\storegame{immortal_game_02}
+The black knight covers the c7 square as White was threatening \mainline{21.Nxg7+ Kd8 22.Bc7#}. 
+\newgame\restoregame{immortal_game_02}
+Another attempt to defend would be \variation{20...Ba6} allowing the black king to flee via \bmove{Kc8} and \bmove{Kb7}, although White has enough with the continuation \mainline{21.Nc7+ Kd8 22.Nxa6}, where if now \mainline{22...Qxa2} (to defend f7 against \wmove{Bc7+}, \wmove{Nd6+} and \wmove{Qxf7#}) White can play \mainline{23.Bc7+ Ke8 24.Nb4} winning; or if 22...Bb6 (stopping Bc7+) 23.Qxa8 Qc3 24.Qxb8+ Qc8 25.Qxc8+ Kxc8 26.Bf8 h6 27.Nd6+ Kd8 28.Nxf7+ Ke8 29.Nxh8 Kxf8 with a winning endgame for White.
+
+\restoregame{immortal_game_02}
+\mainline{21.Nxg7+ Kd8 22.Qf6+!}
+This queen sacrifice forces Black to give up his defense of e7.
+
+\mainline{22...Nxf6 23.Be7# 1-0}
+At the end, Black is ahead in material by a considerable margin: a queen, two rooks, and a bishop. But the material does not help Black. White has been able to use his remaining pieces—two knights and a bishop—to force mate. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Opera Game %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Opera Game}
+\todo{Check content}
+The Opera Game was played in 1858 in an opera house between Paul Morphy and two strong amateur players, Duke Karl of Brunswik and Count Isouard, who played as a team againt Morphy. The game is famous among chess teachers as it nicely illustrated some key concepts of chess. The following comments are from the corresponding wikipedia article~\cite{opera_game_wikipedia}.
+
+\newgame
+\mainline{1.e4 e5 2.Nf3 d6} 
+This is the Philidor Defence. It is a solid opening, but slightly passive, and it ignores the important d4-square.
+
+\mainline{3.d4 Bg4} 
+Though \variation{3...Bg4} is considered an inferior move today, this was accepted theory at the time. (Today \variation{3...exd4} or \variation{3...Nf6} are usual. \variation{3...f5} is a more aggressive alternative.)
+
+\mainline{4.dxe5 Bxf3}
+If \variation{4...dxe5}, then 5.Qxd8+ Kxd8 6.Nxe5 and White wins a pawn and Black has lost the ability to castle. Black, however, did have the option of 4...Nd7 5.exd6 Bxd6, when he's down a pawn but has some compensation in the form of better development.
+
+\mainline{5.Qxf3}
+Steinitz's recommendation 5.gxf3 dxe5 6.Qxd8+ Kxd8 7.f4 is also good, but Morphy prefers to keep the queens on.
+
+\mainline{5...dxe5 6.Bc4 Nf6}
+This seemingly sound developing move runs into a surprising refutation. After White's next move, both f7 and b7 will be under attack. Better would have been to directly protect the f7-pawn with the queen, making White's next move less potent.
+
+\mainline{7.Qb3 Qe7} (see diagram)
+Black's only good move. White was threatening mate in two moves, for example 7...Nc6 8.Bxf7+ Ke7 9.Qe6\#. 7...Qd7 loses the rook to 8.Qxb7 followed by 9.Qxa8 (since 8...Qc6? would lose the queen to 9.Bb5). Notice that Qe7 saves the rook with this combination: 8.Qxb7 Qb4+ forcing a queen exchange.
+
+Although this move prevents immediate disaster, Black is forced to block the f8-bishop, impeding development and kingside castling.
+
+\mainline{8.Nc3}
+Morphy could have won a pawn by 8.Qxb7 Qb4+ 9.Qxb4 Bxb4+, but in keeping with his style he prefers rapid development over material. Note that 8.Bxf7+?! Qxf7 9.Qxb7 Bc5! gives Black dangerous counterplay for the rook.
+
+\mainline{8...c6}
+The best move, allowing black to defend his pawn without further weakening the light-squares, which have been weakened by black trading off his light-square bishop.
+
+\mainline{9.Bg5 b5?}
+Black attempts to drive away the bishop and gain some time, but this move allows Morphy a strong sacrifice to keep the initiative. 
+
+\mainline{10.Nxb5!}
+Morphy chooses not to retreat the bishop, which would allow Black to gain time for development. Black's move 9...b5 loses but it is difficult to find anything better; for example 9...Na6 10.Bxf6 gxf6 11.Bxa6 bxa6 12.Qa4 Qb7 and Black's position is in shambles.
+
+\mainline{10...cxb5}
+Black could have played 10...Qb4+ forcing the exchange of queens (11.Qxb4 Bxb4+ 12.Nc3), although White would retain a clearly won game being a pawn up.
+
+\mainline{11.Bxb5+}
+Not 11.Bd5? Qb4+, unpinning the knight and allowing the rook to evade capture.
+
+\mainline{11...Nbd7 12.O-O-O}
+The combination of the pins on the knights and the open file for White's rook will lead to Black's defeat.
+
+\mainline{12...Rd8 13.Rxd7 Rxd7}
+Removing another defender.
+
+\mainline{14.Rd1}
+Compare the activity of the white pieces with the idleness of the black pieces. At this point, Black's rook is not able to be saved, since it is pinned to the king and attacked by the rook, and though the knight defends it, the knight is pinned to the queen. 
+
+\mainline{14...Qe6}
+Qe6 is a futile attempt to unpin the knight (allowing it to defend the rook) and offer a queen trade, to take some pressure out of the white attack. Even if Morphy did not play his next crushing move, he could have always traded his bishop for the knight, followed by winning the rook.
+
+\mainline{15.Bxd7+ Nxd7}
+If 15...Qxd7, then 16.Qb8+ Ke7 17.Qxe5+ Kd8 18.Bxf6+ gxf6 19.Qxf6+ Kc8 20.Rxd7 Kxd7 21.Qxh8 and White is clearly winning. Moving the king leads to mate: 15...Ke7 16.Qb4+ Qd6 (16...Kd8 17.Qb8+ Ke7 18.Qe8\#) 17.Qxd6+ Kd8 18.Qb8+ Ke7 19.Qe8\# or 15...Kd8 16.Qb8+ Ke7 17.Qe8\#
+
+\mainline{16.Qb8+!}
+Morphy finishes with a queen sacrifice.
+
+\mainline{16...Nxb8 17.Rd8#}
+
+
+\section{Traps}
+\todo{Check content, or maybe remove, as we have already some traps}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Scholar's Mate %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Scholar's Mate}\label{sec:scholars_mate}
+\todo{Check content}
+Note: not really a trap, should be placed somewhere else
+
+\newgame
+Scholar's Mate, which is sometimes referred to as the \emph{Four-Move Checkmate}, involves a combined attack of the queen and the bishop on the f7-square (or f2 if Black is doing the mate) resulting in a mate.
+
+\mainline{1.e4 e5 2.Qh5 Nc6 3.Bc4 Nf6?? 4.Qxf7#}
+
+\showboard
+
+
+from wikipedia: 
+Avoiding Scholar's mate: Unlike Fool's Mate, which rarely occurs at any level, games ending in Scholar's Mate are quite common among beginners. After 1. e4 e5 2. Qh5 Nc6 3. Bc4, if Black continues 3... Nf6?? then White can end the game immediately with 4. Qxf7\#. However, Black can easily avoid the mate: either 3...Qe7 or 3...g6 defend against the threat. If White renews the Qxf7 threat after 3... g6 4. Qf3, Black can easily defend by 4... Nf6 (see diagram), and develop the f8-bishop later via fianchetto (...Bg7).
+
+White might also try this sequence of moves, starting from the Bishop's Opening: 1. e4 e5 2. Bc4 Bc5 3. Qh5 (threatening Scholar's Mate on f7) and now 3... Qe7! (see diagram; 3...g6? instead would be a big mistake, allowing 4.Qxe5+ and 5.Qxh8) and Black is not only safe, but will attack the white queen later with ...Nf6. Alternatively, Black could have stopped White's plans early on by playing 2...Nf6 instead of 2...Bc5.
+
+Openings: Although a quick mate on f7 is almost never seen in play above beginner level, the basic idea underlying it - that the f7-square, defended only by Black's king, is weak and therefore a good target for early attack - is the motivating principle behind a number of chess openings. For example, after 1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 (the Two Knights Defense), White's most popular continuation is 4. Ng5 attacking f7, which is awkward for Black to defend. The Fried Liver Attack even involves a sacrifice of the knight on f7.
+
+The Wayward Queen Attack (1. e4 e5 2. Qh5?!) and Napoleon Opening (1. e4 e5 2. Qf3?!) are both aimed at threatening Scholar's Mate on the next move (3. Bc4). Although the Napoleon Opening is never seen in high-level competition, the Wayward Queen Attack has occasionally been tried in tournaments by Grandmaster Hikaru Nakamura to achieve a practical middlegame for White.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Kostic Trap %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Kostic trap}
+\todo{Check content}
+\newgame
+Kostic trap, Blackburne-Schilling trap. Dubious trap, since white can easily avoid it. Offshot of the Italian Game.
+
+\mainline{1. e4 e5 2. Nf3 Nc6 3. Bc4} The Italian Game with the white bishop aiming at the weakest black square, which is f7.
+
+\showboard
+
+\mainline{3...Nd4} This is the trap. White can play Nxd4,c3,0-0,or Nc3 avoiding the trap. Instead playing Nxe5 is a horrible blunder.
+
+\showboard
+
+\mainline{4. Nxe5 Qg5 5. Nxf7} Better would have been \variation{5.Bxf7+} and then castling \wmove{O-O}.
+
+\showboard
+
+\mainline{5... Qxg2 6. Rf1 Qxe4+} White can lose his queen with \wmove{Qe2} or even worse play \wmove{Be2}.
+
+\showboard
+
+\mainline{7. Be2 Nf3#} Smothered mate 
+
+\showboard
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Software %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Software}
+\todo{Check content}
+
+\subsection{Stockfish}
+Stockfish is a very strong, open-source chess engine. xxxstrongest?CompetitionsWon?xxx
+
+\subsection{Scid}
+Scid is a tool to organize your own collection of games. It can automatically annotate your games and thereby help to analyse your games. Scid is the abbreviation of \emph{Shane's Chess Information Database}. Although is has its own engine, it is generally recommended to use a better one like Stockfish for example. 
+
+After the installation there is only a very small opening book included but you can get a much larger opening database from the program's website at http://scid.sourceforge.net/download.html
+
+Options -- Game Informations -- Show Materials Values
+switch board "."
+ctrl-x clean board to starting position (restart)
+File -- New: to create your own/new database
+Tools -- Import File of PGN Games
+ctr-shift-a engine window
+ctrl-e open comment editor
+"clipbase" is the temporary database, which you can work on
+
+Database with PGNs, updated every week with the most important chess games: https://theweekinchess.com/twic
+
+\subsection{En Croissant}
+Free open-source alternative to ChessBase: \href{https://encroissant.org/}{https://encroissant.org/}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Online resources %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Notable chess games in pop culture}
+\todo{Check content}
+\subsection{Harry Potter the Philosopher's Stone}
+Harry, Ron, and Hermione were on the quest to get the Philosopher's Stone. They had to face many obstacles, one of them being a chess game, were Ron was a knight, Hermione a rook, and Harry a bishop. As Ron was the best chess player among them, it was him playing the game.
+
+The trio was playing with the black pieces and Ron decided to play the Scandinavian defense 
+
+% https://www.the-leaky-cauldron.org/features/essays/issue26/chessgameinsorcerersstone/
+IM Jeremy Silman set-up the chess positions for the movie
+
+% iconic chess games
+% https://www.chess.com/blog/TheKiwiHobbit/iconic-chess-scenes-in-fiction-top-5-games-from-movies-and-tv
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Online resources %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Online resources}
+
+A variety of excellent YouTube channels exist, where titled chess players share their knowledge and experience. The following list is, of course, very subjective and only includes a very small number of channels. I found those channels while trying to get better in chess and they might be helpful to others, too.
+
+\begin{itemize}
+\item \href{https://www.youtube.com/watch?v=R2skmBe07aQ&list=PLT1F2nOxLHOfQ-eoJTpyvKkQFwYewDduj&pp=iAQB}{\textit{Beginner to Master Speedrun} playlist by \textbf{GM Daniel Naroditsky}}: In this speedrun playlist, Daniel Naroditsky is making its way up to the top starting from very low elo values. He explains from the beginning on what his motivation behind every move is, thereby providing a very instructive video lecture series.
+%
+\item \href{https://www.youtube.com/playlist?list=PLl9uuRYQ-6MBwqkmwT42l1fI7Z0bYuwwO}{\textit{Chess Fundamentals} by \textbf{IM John Bartholomew}}: This series is worth watching multiple time. John Bartholomew is a great instructor and in his series he explains various concepts in great detail thereby enabling the watcher to gain a deeper understanding of chess.
+\end{itemize}
+
+
+
+\section*{References}
+\begin{thebibliography}{10}
+	\bibitem{Kloth2020} \href{https://www.youtube.com/watch?v=m85kjIZ3Lkk}{Rafael Kloth, YouTube-Video: Ein Eröffnungs-Repertoire für Anfänger (2020)}
+	\bibitem{CHESScom.2023} \href{https://www.chess.com/de/article/view/schafermatt-matt-in-4-zugen}{Chess.com: 
+\textit{Schäfermatt (Matt in 4 Zügen)}, retrieved 30.05.2023}
+\bibitem{chessable.2022} %
+	\href{https://www.chessable.com/blog/the-kings-indian-attack/}%
+	{chessable.com: \textit{The King’s Indian Attack – How to Play It as White and Black} (Andrew Kauffman), retrieved 02.06.2023}
+\bibitem{chessfox.2023} %
+	\href{https://chessfox.com/how-to-play-the-kings-indian-attack/}%
+	{Chessfox.com: \textit{How to Play the King’s Indian Attack}, retrieved 02.06.2023}
+\bibitem{ChessOpeningExplorer-Ponziani.2023}
+	\href{https://www.365chess.com/opening.php?m=6&n=490&ms=e4.e5.Nf3.Nc6.c3}%
+	{365Chess.com, Chess Opening Exlporer, retrieved 2023-10-05}
+\bibitem{french_defense_wikipedia} %
+	\href{https://en.wikipedia.org/wiki/French_Defence}{wikipedia: French Defense, retrieved 27.12.2015}	
+\bibitem{chesskid.com} %
+	\href{http://www.chesskid.com/article/view/your-first-opening-the-lolli-attack}{www.chesskid.com, retrieved 12.12.2015, analysis by FM Eric Schiller}
+\bibitem{Scharndorf.2010}%
+	Lars Scharndorf \textit{Grandmaster Repertoire 7: The Caro-Kann} (Quality Chess, 2010)
+\bibitem{GMBryanSmith.2015} %
+	\href{https://www.chess.com/article/view/the-caro-kann-modern-times/}%
+	{GM BryanSmith on chess.com: \textit{The Caro-Kann: Modern Times}, retrieved 29.09.2023}	
+\bibitem{fried_liver.1610} %
+	\href{http://www.chessgames.com/perl/chessgame?gid=1224683}{Polerio v Domenico, Rome 1610}
+	\bibitem{Chernin.2001} Chernin A, and Alburt L {\it Pirc Alert!} (London, 2001)
+	\bibitem{Vigus.2007} Vigus J {\it Pirc in Black and White: Detailed Coverage Of An Enterprising Chess Opening} (2007)
+	\bibitem{opera_game_wikipedia} \href{https://en.wikipedia.org/wiki/Opera_game}{wikipedia: Opera Game, retrieved 04.01.2016}	
+	\bibitem{philidor_chesspathways} \href{https://chesspathways.com/chess-openings/kings-pawn-opening/philidor-defense/}{ChessPathways: Philidor Defense, retrieved 2024-04-30}
+	\bibitem{philidor_simplifychess} \href{https://simplifychess.com/philidor-defence/index.html}{Simplify Chess, Philidor Defense, retrieved 2024-05-01}
+\bibitem{Smirnov2024} %
+	\href{https://www.youtube.com/watch?v=xGttvOKOemk}%
+		{Remote Chess Academy (GM Igor Smirnov), YouTube-Video:  You Must Try These Tricky Openings in the Italian Game for White (2024)}
+\end{thebibliography}
+
+
+
+
+\clearpage
+\section{How-To}
+Chess notation in \LaTeX{}
+ 
+\medskip
+
+%%%%%%%%%%%%%%%
+% start a new game and set all pieces in starting position
+\newgame
+\mainline{1.e4}
+
+% show chessboard in document 
+\showboard
+ 
+\lastmove{} is the most common opening move, \wmove{h5} is much less common. A response like \bmove{a6} is quite uncommon, too.
+ 
+\mainline{1...e5 2.Nf3 Nc6 3.d4}
+
+\showboard
+ 
+\mainline{3...e5xd4 4.Bb5 a6 5.O-O}
+
+\showboard
+
+%%%%%%%%%%%%%%%
+\newgame
+\mainline{1.e4}
+
+\showboard
+
+\mainline{1...e5 2.Nf3 Nc6 3.d4}
+ 
+\showboard
+ 
+% for \variation{}, number of first move must be same as the last in previous \mainline{} command
+From this point, \variation{3.d3 d5} is a good but far less
+aggressive alternative.
+ 
+\mainline{3...e5xd4 4.Bb5 a6 5.O-O}
+
+%%%%%%%%%%%%%%%%%
+\newgame
+\mainline{1. e4 e5 2. Nf3 Nc6 3. d4}
+
+\mainline{3...e5xd4 4.Bb5 a6 5.O-O}
+
+% this seems to affect all following commands => has to be resetted
+\showonly{B,Q,q,K,k,N,n}
+\showboard
+\showall
+
+%%%%%%%%%%%%%%%%%
+\newgame
+Now we are using the Forsyth-Edwards Notation (FEN).
+% contents of the ranks starting from 8th row, separating by slashs ("/")
+% who to move next
+% castling options for white and black: "-" for none, "Q" for queenside , "K" for kingside (small letters for black)
+% en passant square if applicable, otherwise "-"
+% number of half moves since last capture
+% move number
+\fenboard{r5k1/1b1p1ppp/p7/1p1Q4/2p1r3/PP4Pq/BBP2b1P/R4R1K w - - 0 20}
+
+\showboard
+
+%%%%%%%%%%%%%%%%%
+% one way to discuss variations in detail by fast-forwarding a game to a specific position
+\newgame
+
+\hidemoves{1.e4 e5 2.Nf3 Nc6 3.Bb5}
+\mainline{3...Nge7} blah blah
+
+\showboard
+
+%%%%%%%%%%%%%%%%%%
+\newgame
+\mainline{1.e4 e5 2.Nf3 Nc6 3.Bb5} trying to store game now
+\storegame{game1}
+\mainline{3...a6 4.Ba4 b5}
+
+\showboard
+\restoregame{game1}
+
+\mainline{3...Bd7} previously saved game has been restored
+
+\showboard
+
+%%%%%%%%%%%%%%%%%%
+\newgame
+\styleA
+styleA: 
+\mainline{1.e4 c5 2.Nf3 Nc6}
+
+\showboard
+
+%%%%%%%%%%%%%%%%%%
+\newgame
+\styleB
+styleB: 
+\mainline{1.e4 c5 2.Nf3 Nc6}
+
+\showboard
+
+%%%%%%%%%%%%%%%%%%
+\newgame
+\styleC
+styleC: 
+\mainline{1.e4 c5 2.Nf3 Nc6}
+
+\showboard
+
+An interesting variation is \variation{2...d6} because bla
+
+%%%%%%%%%%%%%%%%%%
+%\newgame
+%\showmoverOn
+%\notationOff
+%\showboard
+%\highlight{a1,a3}
+%\highlight[x]{c1,c3}
+%\highlight[X]{c4}
+%\highlight[o]{d6}
+%\highlight[O]{c6}
+%\printarrow{e2}{e4}
+%\printknightmove{g8}{f6}
+
+
+
+  
+
+\end{document}
+
